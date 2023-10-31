@@ -1,0 +1,27 @@
+﻿@model tallerbiblioteca.Models.Autor
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Eliminar</h1>
+
+<h3>Estas seguro que deseas Eliminar este autor?</h3>
+<div>
+    <h4>Autor</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NombreAutor)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NombreAutor)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="mb-2 mt-2">Eliminar</button>
+        <button><a asp-action="Index">Regresar</a></button>
+    </form>
+</div>

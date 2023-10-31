@@ -1,0 +1,112 @@
+Create 
+
+@model tallerbiblioteca.Models.Peticiones
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Crear</h1>
+
+<h4>Peticiones</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div> *@
+             <div class="form-group">
+                <label asp-for="Id_ejemplar" class="control-label"></label>
+                <select asp-for="Id_ejemplar" class ="form-control" asp-items="ViewBag.Id_ejemplar"></select>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="Id_ejemplar" class="control-label"></label>
+                <select asp-for="Id_ejemplar" class="form-control" asp-items="@(ViewBag.Id_ejemplar as SelectList)"></select>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Id_usuario" class="control-label"></label>
+                <select asp-for="Id_usuario" class="form-control" asp-items="@(ViewBag.Id_usuario as SelectList)"></select>
+            </div>
+            @*<div class="form-group">
+                <label asp-for="Id_usuario" class="control-label"></label>
+                <input asp-for="Id_usuario" class="form-control" />
+                <span asp-validation-for="Id_usuario" class="text-danger"></span>
+            </div>*@
+            <div class="form-group">
+                <label asp-for="Motivo" class="control-label"></label>
+                <input asp-for="Motivo" class="form-control" />
+                <span asp-validation-for="Motivo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaPeticion" class="control-label">Fecha y Hora:</label>
+                <input asp-for="FechaPeticion" class="form-control" />
+                <span asp-validation-for="FechaPeticion" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if (ViewData["Crear"] != null && ViewData["Crear"].ToString() == "true")
+{
+    <script>
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Peticion Creada Con Exito',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(function () {
+            window.location.href = '@Url.Action("Index", "Peticiones")';
+        });
+    </script>
+}
+
+@if (ViewData["SUSPENDIDO"] != null && ViewData["SUSPENDIDO"].ToString() == "true")
+{
+    <script>
+        Swal.fire({
+            title: 'Error',
+            text: 'Este Usuario Está SUSPENDIDO, no puede prestar Libros ',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    </script>
+}
+@if (ViewData["Inactivo"]!= null && ViewData["Inactivo"].ToString() == "true")
+{
+    <script>
+        Swal.fire({
+            title: 'Error',
+            text: 'Este Usuario Está INHABILITADO, no puede prestar Libros ',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    </script>
+}
+@if (ViewData["Existe"] != null && ViewData["Existe"].ToString() == "true")
+{
+    <script>
+        Swal.fire({
+            title: 'Error',
+            text: 'Este Usuario ya tiene una petición pendiente, solo puedes hacer una peticion a la vez',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    </script>
+}
+
+<div>
+    <a class="btn btn-primary"asp-action="Index">Volver</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,55 @@
+
+
+ @model IEnumerable<tallerbiblioteca.Models.Prestamo>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<!-- con solo este div permitiremos a js insertar el calendario gracias a la libreria fullcalendar-->
+<div id='calendar'></div>
+
+<!-- este va ser el modal que se va abrir cuando le demos click a una fecha, esto por medio de js -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Información de la Fecha</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Fecha seleccionada: <span id="modal-date"></span>
+                <br>
+                Evento: <span id="modal-event"></span>
+                <br>
+                Usuario: <span id="modal-user"></span>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @{
+        var Mensaje =  TempData["Mensaje"] as string;
+ 
+        if (Mensaje!=null){
+            var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+        <script>
+            const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+            const icono = "@mensaje.Icono";
+            MostrarMensajeUsuarios(icono, cuerpo);
+        </script> 
+        }
+    }
+} 
+ 

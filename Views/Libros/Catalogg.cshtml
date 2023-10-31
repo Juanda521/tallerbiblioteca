@@ -1,0 +1,230 @@
+﻿@* @model IEnumerable<tallerbiblioteca.Models.Libro>; *@
+    @using System.Security.Claims;
+    @model tallerbiblioteca.Models.CatalogoViewModel;
+
+@{
+    ViewData["Title"] = "Catalogo";
+}
+
+<div class="row">
+    <div class="col-8 pt-5">
+        <h1>Bienvenido a tu biblioteca BOOKWARE</h1>
+    </div>
+    <div class="col-4">
+        <form> 
+            <p>
+                <input type="text" name="busqueda" placeholder="Nombre libro" class="form-control mt-5"/>
+                <button type="submit" class="ms-4 mt-1" value="Buscar">Buscar</button>
+            </p>
+        </form>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-4">
+        <div class="carrousel-container">
+            <div class="carousel ms-1 me-5">
+                @for(int i = 0;i<=8 && i< Model.Libros.Count;i++){
+                    <div class="carousel__face">
+                        <img src="data:Images;base64,@Model.Libros[i].ImagenLibro" alt="fallo en la imagen" srcset="">
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @foreach(var Libro in Model.Libros){
+       
+         <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+            <div class="card mb-2" style="width: 13rem;">
+                <img src="data:Images;base64,@Libro.ImagenLibro" class="img-fluid" alt="fallo en la imagen" srcset="" width="180" heigh="200">
+                @* <img src="data:Images;base64,@Libro.ImagenLibro" class="card-img-top" alt="aun no hay imagen "> *@
+                <div class="card-body">
+                    <h5 class="card-title">@Libro.Nombre</h5>
+                    <h5 class="card-title">@Libro.CantidadLibros</h5>
+                   
+                    
+                   <!-- Button trigger modal -->
+                    <button type="button" class="libros-relacionados-button" data-id="@Libro.Id"  data-bs-toggle="modal" data-bs-target="#info_@Libro.Id">
+                        ver informacion
+                    </button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="info_@Libro.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">@Libro.Nombre</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                   <div class="row">
+                                        <div class="col-3">
+                                            <img class="m-4" src="data:Images;base64,@Libro.ImagenLibro" alt="fallo en la imagen" srcset="">
+                                        </div> 
+                                        <div class="col-6">
+                                            <h4>@Libro.Nombre</h4>
+                                            @foreach(var autor in Model.Autores){
+                                                if(autor.Id_libro == Libro.Id){
+                                                    <p class="text-bold">@autor.Autor.NombreAutor</p>
+                                                }
+                                            }
+
+                                            @foreach(var genero in Model.Generos){
+                                                if(genero.Id_libro == Libro.Id){
+                                                    <p class="text-bold etiqueta">@genero.Genero.NombreGenero</p>
+                                                }
+                                            }
+                                          
+                                            <form asp-controller="Peticiones" asp-action="Create">
+                                                @foreach(var ejemplar in Model.Ejemplares){
+                                                    if(ejemplar.Id_libro == Libro.Id && ejemplar.EstadoEjemplar == "DISPONIBLE"){
+                                                        <input type="hidden" asp-for="@Model.Peticiones.Id_ejemplar" value="@ejemplar.Id">
+                                                        <input type="hidden" asp-for="@Model.Peticiones.Motivo" value="Prestamo Libro">
+                                                    }else{
+                                                        <input type="hidden" asp-for="@Model.Peticiones.Motivo" value="Reserva Libro">
+                                                    }
+                                                }
+                                                <input type="hidden" asp-for="@Model.Peticiones.Id_usuario" value = "@User.FindFirstValue(ClaimTypes.NameIdentifier)" >
+                                                <button type="button"  data-bs-dismiss="modal">Reservar</button>
+                                                <button type="submit">Prestar</button>
+                                            </form>
+                                          
+                                        </div>
+                                        <div class="col-3 relaciones-@Libro.Id">
+                                            <h4>tambien te puede gustar:</h4>
+                                           
+                                           
+                                        </div>
+                                        <p class="card-text">@Libro.Descripcion.</p>
+                                   </div> 
+                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Escucha el evento click en los botones con la clase 'libros-relacionados-button'
+        $('.libros-relacionados-button').click(function () {
+            // Obtén el ID del libro desde el atributo 'data-id'
+            var idLibro = $(this).data('id');
+            console.log(idLibro)
+            // Llama a la función para obtener libros relacionados
+            obtenerLibrosRelacionados(idLibro);
+        });
+
+        // Función para obtener y mostrar los libros relacionados en el modal
+        function obtenerLibrosRelacionados(idLibro) {
+            console.log(idLibro)
+            $.ajax({
+                url: '@Url.Action("LibrosRelacionadosPorGenero", "Libros")',
+                type: 'GET',
+                data: { idLibro: idLibro },
+                success: function (data) {
+                    var librosRelacionadosContent = $('.relaciones-' + idLibro);
+                    librosRelacionadosContent.empty();
+                   @* librosRelacionadosContent.append('<h3>' tambien te pueden gustar'</h3>'); *@
+                    for (var i = 0; i < data.length; i++) {
+                        var libro = data[i];
+                        librosRelacionadosContent.append('<p>' + libro.nombre + '</p>');
+                    }
+                     
+
+                    console.log(data)
+                },
+                error: function () {
+                    console.log('Hubo un error al obtener los libros relacionados.');
+                }
+            });
+        }
+    });
+</script>
+@section Scripts{
+    @{
+        var Mensaje =  TempData["Mensaje"] as string;
+ 
+        if (Mensaje!=null){
+            var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+        <script>
+            const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+            const icono = "@mensaje.Icono";
+            MostrarMensajeUsuarios(icono, cuerpo);
+        </script>
+          
+        }
+      
+    }
+}
+  
+  
+ 
+@*   
+ <script>
+        var Mensaje = '@TempData["Mensaje"]';   
+        if (Mensaje) {     
+         MostrarMensaje(Mensaje);
+        }
+    </script> *@
+
+
+@* <div id="logo" class="fl_left row">
+        <div class="col-9">
+            <h1><a href="index.html">BookWare</a></h1>
+        </div>
+        <div class="col-3">
+                <a class="dropdown ">
+                    <a data-bs-toggle="dropdown" aria-expanded="true">
+                        <div class="notification">
+                            <div class="notification-icon"></div>
+                            <div class="notification-badge border border-dark border-3" id="valorCampana"></div>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu" style="width: 200px;">
+                        <li id="notificacionesContainer"></li>
+                    </ul>
+                </a>
+        </div>
+    </div>
+    
+    <div  class="fl_right">
+        <div class="row">
+            <div class="col-10">
+                <ul class="nospace inline ">
+                    <li><h6 class=""><strong> @if(User.Identity.IsAuthenticated){
+                        @User.Identity.Name;
+                        }else{
+                        <h6>BookWare</h6>}</strong><br>
+                    Rol</h6>
+                    </li> 
+                </ul> 
+            </div>
+            <div class="col-2 pt-3">
+                <a role="button"  data-bs-toggle="dropdown" aria-expanded="false"">
+                    <i class="fa-solid fa-bars fa-2xl"  style="color: #269c2e;">  </i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item">Perfil</a></li>
+                    @if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
+                    {
+                        <li><a class="dropdown-item" asp-controller="Rol" asp-action="Index">Roles</a></li>
+                        <li><a class="dropdown-item" asp-controller="Configuracion" asp-action="Index">Configuracion</a></li>
+                    }
+                    <li><hr class="dropdown-divider"></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a class="dropdown-item" asp-controller="Usuarios" asp-action="Logout" onclick="return confirm ('seguro deseas cerrar sesion?');">Cerrar session</a></li>
+                    }
+                </ul>      
+            </div>
+        </div>
+    </div> *@

@@ -1,0 +1,164 @@
+@* @model IEnumerable<tallerbiblioteca.Models.Pginacion<Ejemplar>> *@
+    @model Paginacion<Ejemplar>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="row">
+    <div class="col-md-4 m-2">
+        <p>
+            <button class="mt-1"> <a asp-action="Create">  Registrar </a></button> 
+        </p>
+    </div>
+
+    <div class="col-4">
+        <form asp-action="Index"> 
+            <p>
+                <input type="text" name="busqueda" placeholder="Nombre libro, Isbn o Id" class="form-control"/>
+                <button type="submit" class="ms-4 mt-1" value="Buscar">Buscar</button>
+            </p>
+        </form>
+    </div>
+   
+</div>
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Id_libro
+                </th>
+                <th>
+                    Nombre libro
+                </th>
+                <th>
+                    Isbn
+                </th>
+                <th>
+                    Estado
+                </th>
+                <th>
+                    <div class="col-md-4 pt-5">
+                        <h2 class="fw-bold text-center ">Ejemplares</h2>
+                    </div
+                </th>
+
+                
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var ejemplar in Model.Items) {
+            <tr>
+                <td>
+                   @ejemplar.Id
+                </td>
+                <td>
+                    @Html.DisplayFor(modelejemplar => ejemplar.Id_libro)
+                </td>
+                    <td>
+                    @Html.DisplayFor(modelejemplar => ejemplar.Libro.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelejemplar => ejemplar.Isbn_libro)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelejemplar => ejemplar.EstadoEjemplar)
+                </td>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button"  data-bs-toggle="modal" data-bs-target="#editar_@ejemplar.Id">
+                    Editar
+                    </button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="editar_@ejemplar.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Editar @ejemplar.Id</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form asp-action="Edit" method="post">
+                                        @Html.Hidden("Id", ejemplar.Id)
+                                        <select asp-for="@ejemplar.EstadoEjemplar" name="Estado" class="form-select">
+                                        <option value="DISPONIBLE">Disponible</option>
+                                        <option value="NO_DISPONIBLE">No Disponible</option>
+                                        </select>
+                                        <button class="mt-2" type="submit">Editar</button>
+                                    </form>
+                                
+                                </div>
+                        
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" id="form-@ejemplar.Id.ToString()" onsubmit="sendForm(event)">
+                            @Html.Hidden("Id", ejemplar.Id)
+                        <button type="submit">Eliminar </button>
+                    </form>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+  
+</div>
+
+    <div class="text-center ms-5 ps-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item @(Model.Numero_pagina == 1 ? "disabled" : "")">
+                    <a class="page-link text-dark" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+                </li>
+                @for (var i = 1; i <= Model.TotalItems; i++)
+                {
+                    <li class="page-item  @(Model.Numero_pagina == i ? "active" : "") ">
+                        <a class=" page-link bg-success text-dark" href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Numero_pagina == Model.TotalItems ? "disabled" : "")">
+                    <a class="page-link text-dark" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">Última</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+     @section Scripts{
+        <script>
+            function sendForm(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Quieres eliminar este ejemplar?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'SI'
+                }).then((resultado) => {
+                    if (resultado.isConfirmed) {
+                        var formId = e.target.id;
+                        var formElement = document.querySelector("#" + formId);
+                        if (formElement) {
+                            formElement.submit();
+                        } else {
+                            console.error("El formulario con ID " + formId + " no se encontró en el DOM.");
+                        }
+                    }
+                })
+            }
+        </script>
+        @{
+            var Mensaje =  TempData["Mensaje"] as string;
+            if (Mensaje!=null){
+                var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+                <script>
+                    const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+                    const icono = "@mensaje.Icono";
+                    MostrarMensajeUsuarios(icono, cuerpo);
+                </script>
+            }
+        }
+    }
+

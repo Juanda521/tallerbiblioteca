@@ -1,0 +1,100 @@
+
+@* @model IEnumerable<tallerbiblioteca.Models.Peticiones> *@
+    @model tallerbiblioteca.Models.PeticionesViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p>
+    <a class = "btn btn-success"asp-action="Create">Nueva Peticion </a>
+</p>
+<table class="table col-12">
+    <thead>
+        <tr>
+            <th>
+                @* @Html.DisplayNameFor(model => model.Id) *@
+                id
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.Id_ejemplar) *@
+                id ejemplar
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.Id_usuario) *@
+                id_usuario
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.FechaPeticion) *@
+                FechaPeticion
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.Motivo) *@
+                motivo
+            </th>
+              <th>
+                @* @Html.DisplayNameFor(model => model.Motivo) *@
+                Estado
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Peticiones) {
+        <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id_ejemplar)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id_usuario)
+            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaPeticion)
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Motivo)
+            </td>
+              <td>
+                @Html.DisplayFor(modelItem => item.Estado)
+            </td>
+            <td>
+                <form asp-controller="Prestamos" asp-action="Create"  >
+                    <input asp-for="@Model.Prestamo.Id_peticion" value="@item.Id"  type="hidden">
+                    
+                    <button type="submit">aceptar</button>
+                </form> 
+                <button ><a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a></button>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @{
+        var Mensaje =  TempData["Mensaje"] as string;
+ 
+        if (Mensaje!=null){
+            var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+        <script>
+             console.log("se va mostrar");
+             
+            const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+            const icono = "@mensaje.Icono";
+            MostrarMensajeUsuarios(icono, cuerpo);
+        </script>
+          
+        }else{
+             <script>
+                console.log("jmm");
+            </script>
+        }
+      
+    }
+}

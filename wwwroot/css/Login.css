@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@1,300&display=swap');
+
+
+footer{
+background-color: white;
+}
+
+body{
+    font-family: 'poppins', sans-serif;
+    /* background: white; */
+    background-image: url('../Images/bg2.webp');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+h1{
+    writing-mode: vertical-rl;
+    font-size: 20px;
+    transform: rotate(180deg);
+}
+
+.footer-title {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.footer-content {
+    margin-bottom: 30px;
+}
+
+.footer-line {
+    margin-bottom: 5px;
+}
+
+
+.elegant-heading {
+    font-family: "Arial", sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+
+hr{
+    background-color: black;
+    height: 2px;
+    width: 50%;
+    margin-left: 0;
+}
+
+/*-------------------- Login container -----------------*/
+.box-area{
+    width: 930px;
+}
+
+.image-fluid{
+    border-radius: 20%;
+    
+}

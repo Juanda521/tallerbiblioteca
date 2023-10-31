@@ -1,0 +1,36 @@
+﻿@model IEnumerable<tallerbiblioteca.Models.Genero>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Inicio</h1>
+
+<p>
+    <button> <a asp-action="Create">Crear Genero</a></button>
+   
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreGenero)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NombreGenero)
+            </td>
+            <td>
+                <button> <a asp-action="Edit" asp-route-id="@item.Id" >Editar Genero</a> |</button>
+                <button>   <a asp-action="Details" asp-route-id="@item.Id" >Detalles genero</a> |</button>
+                <button> <a asp-action="Delete" asp-route-id="@item.Id" >Eliminar genero</a></button>    
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

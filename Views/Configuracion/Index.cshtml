@@ -1,0 +1,279 @@
+﻿@model tallerbiblioteca.Models.ConfiguracionViewModel;
+
+
+@{
+    ViewData["Title"] = "Configuracion";
+}
+
+<div class="container-fluid">
+    <button>
+        <a  asp-action="UsuariosInactivos">Usuarios Inactivos</a>
+    </button>
+    
+  
+    <h1 class="mb-2 text-dark ">permisos activos</h1>
+
+    <div class="row text-center p-1">
+    
+      
+    @foreach (var rol in Model.Roles)
+    {
+    
+            <div class="col-12 border border-4 border-dark mb-4">
+             
+                <div class="container p-2"  style="max-height: 550px; overflow-y: auto;">
+                    <h3>@rol.Nombre</h3>
+
+                   @switch(rol.Id){
+                       case 1:
+                            @if (Model.ConfiguracionesAdmin != null)
+                            {
+                                @foreach (var config in Model.ConfiguracionesAdmin)
+                                {
+                                    <div class="row mb-2 border-bottom border-dark" >
+                                        <div class="col-4">
+                                            <p>@config.Permiso.Nombre</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <form asp-action="Edit" asp-route-id="@config.Id" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <label class="toggle-switch">
+                                                                        <input type="checkbox" class="checkboxEstadoPermiso" name="chk" @if (config.Estado == "ACTIVO")
+                                                                        {
+                                                                            <text>checked</text>
+                                                                        } />
+                                                                        <span class="slider"></span>
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-8">
+                                                                 <button type="submit" onclick="chk.checked = !chk.checked" > editar</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="col-6 ms-n4">
+                                                    <p>@config.Estado</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                        
+                                            <form asp-action="Delete" asp-route-id="@config.Id" id="form_@config.Id" method="post" onsubmit="sendForm(event, @config.Id)" >
+                                                @Html.AntiForgeryToken()
+                                                <button  type="submit">
+                                                    <img src="~/Images/borrar.png" alt="no encontre la imagen" style="width: 20px; height: 20px;">
+                                                </button>
+            
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                 
+                                       
+                                }
+                            }
+                            break;
+                       case 2:
+                       @if(Model.ConfiguracionesUsuario!=null){
+                        
+                            @foreach (var config in Model.ConfiguracionesUsuario)
+                            {
+                                <div class="row mb-2 border-bottom border-dark">
+                                    <div class="col-4">
+                                        <p>@config.Permiso.Nombre</p>
+                                    </div>
+                                    <div class="col-4">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <form asp-action="Edit" asp-route-id="@config.Id" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <label class="toggle-switch">
+                                                                        <input type="checkbox" class="checkboxEstadoPermiso" name="chk" @if (config.Estado == "ACTIVO")
+                                                                        {
+                                                                            <text>checked</text>
+                                                                        } />
+                                                                        <span class="slider"></span>
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-8">
+                                                                 <button type="submit" onclick="chk.checked = !chk.checked" > editar</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="col-6 ms-n4">
+                                                    <p>@config.Estado</p>
+                                                </div>
+                                            </div>
+                                         
+                                    </div>
+                                    <div class="col-4">
+                                            <form asp-action="Delete" asp-route-id="@config.Id" method="post"  id="form_@config.Id" onsubmit="sendForm(event, @config.Id)">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit">
+                                                    <img src="~/Images/borrar.png" alt="no encontre la imagen" style="width: 20px; height: 20px;">
+                                                </button>
+
+                                            </form>
+                                    </div>
+                                </div>
+                            }
+                           
+                       }
+                       break;
+                        case 3:
+                            @if (Model.ConfiguracionesAlfabetizador != null)
+                            {                             
+                                @foreach (var config in Model.ConfiguracionesAlfabetizador)
+                                {
+                                    <div class="row mb-2 border-bottom border-dark">
+                                        <div class="col-4">
+                                            <p>@config.Permiso.Nombre</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <form asp-action="Edit" asp-route-id="@config.Id" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <label class="toggle-switch">
+                                                                        <input type="checkbox" class="checkboxEstadoPermiso" name="chk" @if (config.Estado == "ACTIVO")
+                                                                        {
+                                                                            <text>checked</text>
+                                                                        } />
+                                                                        <span class="slider"></span>
+                                                                </label>
+                                                            </div>
+                                                            <div class="col-8">
+                                                                 <button type="submit" onclick="chk.checked = !chk.checked" > editar</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="col-6 ms-n4">
+                                                    <p>@config.Estado</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <form asp-action="Delete" asp-route-id="@config.Id" method="post" id="form_@config.Id" onsubmit="sendForm(event, @config.Id)">
+                                                @Html.AntiForgeryToken()
+                                                <button  type="submit">
+                                                    <img src="~/Images/borrar.png" alt="no encontre la imagen" style="width: 20px; height: 20px;">
+                                                </button>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                } 
+                            }
+                        break;
+                   }
+                    <button type="button"  data-bs-toggle="modal" data-bs-target="#create_@rol.Id">
+                        Registrar
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="create_@rol.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">@rol.Nombre</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>Asignar permiso al rol: @rol.Nombre</h6>
+                                    <form asp-controller = "Configuracion" asp-action="Create" >
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <div class="form-group">
+                                            <input asp-for="@Model.Configuracion.Id_rol" class="form-control" value="@rol.Id" type="hidden"/>
+                                           
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="@Model.Configuracion.Id_permiso" class="control-label"></label>
+                                            @if(rol.Id == 01)
+                                            {
+                                              <select asp-for="@Model.Configuracion.Id_permiso" class="form-control" asp-items="ViewBag.PermisosNoAsociadosAdmin"></select>
+                                            }else if(rol.Id == 02)
+                                            {
+                                              <select asp-for="@Model.Configuracion.Id_permiso" class="form-control" asp-items="ViewBag.PermisosNoAsociadosUser"></select>
+                                            }else{
+                                                <select asp-for="@Model.Configuracion.Id_permiso" class="form-control" asp-items="ViewBag.PermisosNoAsociadosAlfa"></select>
+                                            }
+                                        </div>     
+                                        <div class="form-group">
+                                           
+                                            <input asp-for="@Model.Configuracion.Estado" class="form-control" value="ACTIVO" type="hidden" />
+                                            <span asp-validation-for="@Model.Configuracion.Estado" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group mt-2">
+                                           <button type="submit">registrar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+    </div>
+    </div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        var Mensaje =  TempData["Mensaje"] as string;
+        if (Mensaje!=null){
+            var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+            <script>
+                const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+                const icono = "@mensaje.Icono";
+                MostrarMensajeUsuarios(icono, cuerpo);
+            </script>
+        }
+         <script>
+            function sendForm(e,idConfig) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Seguro que deseas eliminar esta configuracion?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'SI'
+                }).then((resultado) => {
+                    if (resultado.isConfirmed) {
+                        const formulario = document.getElementById("form_"+idConfig)
+                        console.log(formulario)
+                        formulario.submit();
+                    }
+            })
+        }
+    </script>
+ 
+    }
+  }  
+    @* var checkboxEstadoPermiso = document.querySelectorAll('.checkboxEstadoPermiso');
+        checkboxEstadoPermiso.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                // Obtener el elemento de párrafo hermano que muestra el estado
+                var estadoElement = this.closest('.col-4').nextElementSibling.querySelector('p');
+
+                // Actualizar el contenido del párrafo hermano según el estado del switch
+                estadoElement.textContent = this.checked ? 'ACTIVO' : 'INACTIVO';
+            });
+        }); *@
+
+       
+    
+
+  
+

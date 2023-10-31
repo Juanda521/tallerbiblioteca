@@ -1,0 +1,24 @@
+﻿@model tallerbiblioteca.Models.Genero
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Genero</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NombreGenero)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NombreGenero)
+        </dd>
+    </dl>
+</div>
+<div>
+    <button>  <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |</button>
+    <button>    <a asp-action="Index">Regresar</a></button>
+</div>
