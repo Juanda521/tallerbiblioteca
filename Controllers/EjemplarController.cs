@@ -27,7 +27,7 @@ namespace tallerbiblioteca.Controllers
             _librosServices = librosServices;
         }
 
-        public async Task<IActionResult> Index(string busqueda,int Numero_pagina = 1, int itemsPagina  = 8)
+        public async Task<IActionResult> Index(string busqueda,int pagina = 1, int itemsPagina  = 8)
         {
             var ejemplares  = await _ejemplarServices.ObtenerEjemplares();
             if (busqueda != null){
@@ -35,8 +35,9 @@ namespace tallerbiblioteca.Controllers
                 ejemplares = ejemplares.Where (e=>e.Id.ToString().Contains(busqueda)  || e.Libro.Nombre.ToLower().Contains(busqueda)  || e.Isbn_libro.ToString().Contains(busqueda ) || e.EstadoEjemplar.ToString().Contains(busqueda )).ToList();
             }
             var totalEjemplares = ejemplares.Count;
-            var ejemplaresPaginados = ejemplares.Skip((Numero_pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
-            Paginacion<Ejemplar> paginacion  = new(ejemplaresPaginados,totalEjemplares,Numero_pagina,itemsPagina);
+            var ejemplaresPaginados = ejemplares.Skip((pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
+            Paginacion<Ejemplar> paginacion  = new(ejemplaresPaginados,totalEjemplares,pagina,itemsPagina);
+             ViewData["libros"] = new SelectList(await _librosServices.ObtenerLibros(),"Id","Nombre");
             return View(paginacion);
                             
         }
@@ -51,6 +52,35 @@ namespace tallerbiblioteca.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Id_libro,Isbn_libro,EstadoEjemplar")] Ejemplar ejemplar)
         {
+            Console.WriteLine("aca debe escribir el ejemplar");
+            Console.WriteLine($"esta llegando esto desde el formulario estado {ejemplar.EstadoEjemplar}");
+            MensajeRespuestaValidacionPermiso( await _ejemplarServices.Registrar(ejemplar,User));
+            return RedirectToAction("Index","Libros");
+        } 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult>CreateFromLibros(){
+            
+            Console.WriteLine("hablalo desde registrar ejempla desde la vista de libros");
+                string id_libro = Request.Form["Id_libro"];
+                string isbn_ejemplar = Request.Form["Isbn_ejemplar"];
+                Console.WriteLine("aca deberia copier el id del libro: {0} ", id_libro);
+                 Console.WriteLine("aca deberia copier el isbn del libro: {0} ", isbn_ejemplar);
+
+            if (int.TryParse(id_libro, out int idLibroInt)){
+                Console.WriteLine("id del ejemplar a registrar: {0}", idLibroInt);
+            }else{
+                Console.WriteLine("no esta parseando el ejemplar");
+                return RedirectToAction("Index","Libros");
+            }
+
+           Ejemplar ejemplar = new();
+           ejemplar.Id_libro = idLibroInt;
+           ejemplar.Isbn_libro = isbn_ejemplar;
+           ejemplar.EstadoEjemplar = "DISPONIBLE";
+               
+            Console.WriteLine($"ya va empezar a realizar los servicios");
             MensajeRespuestaValidacionPermiso( await _ejemplarServices.Registrar(ejemplar,User));
             return RedirectToAction("Index","Libros");
         }

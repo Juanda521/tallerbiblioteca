@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj": {}
+    "C:\\Users\\ASUS\\Desktop\\Proyecto\\Final\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj": {
+    "C:\\Users\\ASUS\\Desktop\\Proyecto\\Final\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
+        "projectUniqueName": "C:\\Users\\ASUS\\Desktop\\Proyecto\\Final\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
         "projectName": "tallerbiblioteca",
-        "projectPath": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
+        "projectPath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\Final\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
         "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\obj\\",
+        "outputPath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\Final\\tallerbiblioteca\\tallerbiblioteca\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -41,6 +41,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "EPPlus": {
+              "target": "Package",
+              "version": "[7.0.8, )"
+            },
             "MailKit": {
               "target": "Package",
               "version": "[4.2.0, )"
@@ -64,6 +68,14 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[6.0.16, )"
+            },
+            "QuestPdf": {
+              "target": "Package",
+              "version": "[2023.10.1, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.3, )"
             }
           },
           "imports": [

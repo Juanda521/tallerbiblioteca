@@ -18,21 +18,21 @@
                 <span asp-validation-for="NombreAutor" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button type="submit">Registrar</button>
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <button>
-        <a asp-action="Index">Regresar</a>
-    </button>
-   
+    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@section Scripts{
         <script>
             function sendForm(e) {
                 e.preventDefault();
@@ -43,13 +43,13 @@
                     confirmButtonText: 'SI'
                 }).then((resultado) => {
                     if (resultado.isConfirmed) {
-                        const formulario = document.getElementById("FormularioAutor")
+                        const formulario = document.getElementById("formularioAutor")
                         formulario.submit();
                     }
                 })
             }
         </script>
-    
+    }
 
 @if (ViewData["Autorcreado"] != null && ViewData["Autorcreado"].ToString() == "true")
 {
@@ -64,5 +64,4 @@
             window.location.href = '@Url.Action("Index", "Autor")';
         });
     </script>
-}
 }

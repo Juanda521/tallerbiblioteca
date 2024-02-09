@@ -8,7 +8,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" id="formulario" onsubmit="sendForm(event)">
+        <form asp-action="Create" id="formulario">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @if(User.Identity.IsAuthenticated){
             <div class="form-group">
@@ -20,7 +20,7 @@
                 <input asp-for="Id_rol" type="hidden" value="02"/>
             }
             <div class="form-group">
-                <label  class="control-label fw-bold">Numero de documento</label>
+                <label  class="control-label fw-bold">Número de documento</label>
                 <input asp-for="Numero_documento" class="form-control" />
                 <span asp-validation-for="Numero_documento" class="text-danger"></span>
               
@@ -32,7 +32,7 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Apellido " class="control-label fw-bold"></label>
+                <label asp-for="Apellido" class="control-label fw-bold"></label>
                 <input asp-for="Apellido" class="form-control" />
                 <span asp-validation-for="Apellido" class="text-danger"></span>
             </div>
@@ -57,17 +57,42 @@
             </div>
             <input asp-for="Estado" type="hidden" value="ACTIVO"/>
             
-             <button type="submit" class="mt-2 me-2"> 
+             <button type="submit" class="mt-2 me-2 boton medium"> 
                   Registrar</a>
             </button>
-             <button class="mt-2"> 
+             <button class="mt-2 botonDelete Deletemedium"> 
                 <a asp-action="Index">regresar</a>
             </button>   
         </form>
       
     </div>
 </div>
-
+@if (ViewData["ApellidoExistente"] != null && ViewData["ApellidoExistente"].ToString() == "True")
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Apellido Incorrecto',
+                text: 'Debes de ingresar bien tu apellido, intenta de nuevo',
+                showConfirmButton: true,
+            });
+        });
+    </script>
+}
+@if (ViewData["NombreExistente"] != null && ViewData["NombreExistente"].ToString() == "True")
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Nombre Incorrecto',
+                text: 'Debes de ingresar todo tu nombre, intenta de nuevo',
+                showConfirmButton: true,
+            });
+        });
+    </script>
+}
 @if (ViewData["Usuariocreado"] != null && ViewData["Usuariocreado"].ToString() == "true")
 {
     <script>
@@ -79,6 +104,77 @@
             timer: 1500
         }).then(function () {
             window.location.href = '@Url.Action("Index", "Usuarios")';
+        });
+    </script>
+}
+
+@if (ViewData["Nomatriculado"] != null && ViewData["Nomatriculado"].ToString() == "True")
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Documento Incorrecto',
+                text: 'El número de documento que has intentado ingresar no se encuentra matriculado',
+                showConfirmButton: true,
+            });
+        });
+    </script>
+}
+
+
+@if (ViewData["Encontrado"] != null && ViewData["Encontrado"].ToString() == "True")
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Correo electrónico existente',
+                text:  'El correo electónico ingresado ya está registrado en el aplicativo, intenta con otro diferente',
+                showConfirmButton: true,
+            });
+        });
+    </script>
+}
+
+@if (ViewData["Encontrados"] != null && ViewData["Encontrados"].ToString() == "True")
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Documento incorrecto',
+                text: 'El documento ingresado ya se encuentra registrado, intenta con uno diferente',
+                showConfirmButton: true,
+            });
+        });
+    </script>
+}
+
+@if (ViewData["NoEncontrado"] != null && ViewData["NoEncontrado"].ToString() == "True")
+{
+    <script>
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Usuario Creado Con Exito',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(function () {
+            window.location.href = '@Url.Action("Login", "Usuarios")';
+        });
+    </script>
+}
+@if (ViewData["CorreoInvalido"] != null && ViewData["CorreoInvalido"].ToString() == "True")
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en la creación',
+                text: 'El dominio  que acabas de ingresar no es válido',
+                showConfirmButton: true,
+            });
         });
     </script>
 }

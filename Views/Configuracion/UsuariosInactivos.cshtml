@@ -4,6 +4,11 @@
     ViewData["Title"] = "Usuarios Inactivos";
 }
 <h3>Usuarios Inhabilitados Y suspendidos </h3>
+
+ @if (ViewBag.UsuariosInactivos == 0)
+        {
+            <p class="text-danger fs-3">No hay Usuarios suspendidos o Inhabilitados</p>
+        }else{
 <div class="row p-2">
     <div class="col-12 border border-3 border-dark">
 
@@ -20,7 +25,7 @@
                     </div>
                     <div class="col-4">
                         <form asp-controller="Usuarios" asp-action="eliminarsan" asp-route-id="@usuario.Id" method="post" onsubmit="sendForm(event)" id="formulario" >
-                        <button class="mb-2" type ="submit">activar</button>
+                            <button class="mb-2 boton medium" type ="submit">activar</button>
                         </form>
                     </div>
                 }
@@ -29,6 +34,7 @@
         </div>
     </div>
 </div>
+}
 
 @section Scripts{
     <script>

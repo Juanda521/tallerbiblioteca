@@ -7,24 +7,44 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using tallerbiblioteca.Context;
 using tallerbiblioteca.Models;
+using tallerbiblioteca.Services;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace tallerbiblioteca.Controllers
 {
+    [Authorize]
     public class RolController : Controller
     {
         private readonly BibliotecaDbContext _context;
+        private RolServices _rol_services;
 
-        public RolController(BibliotecaDbContext context)
+        public RolController(BibliotecaDbContext context,RolServices rolServices)
         {
             _context = context;
+            _rol_services = rolServices;
         }
 
         // GET: Rol
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string busqueda,int Numero_pagina = 1, int itemsPagina = 10)
         {
-            return _context.Rol != null ?
-                        View(await _context.Rol.ToListAsync()) :
-                        Problem("Entity set 'BibliotecaDbContext.Rol'  is null.");
+
+            
+            var roles = await _rol_services.ObtenerRoles();
+
+            if (busqueda!=null){
+                roles = _rol_services.Busqueda(busqueda);
+            }
+            int total_roles = roles.Count;
+
+            
+
+            var RolesPaginados = roles.Skip((Numero_pagina-1)*itemsPagina).Take(itemsPagina).ToList();
+
+            Paginacion<Rol> paginacion  = new Paginacion<Rol>(RolesPaginados,total_roles,Numero_pagina,itemsPagina);
+
+
+            return View(paginacion);
         }
 
         // GET: Rol/Details/5
@@ -104,6 +124,7 @@ namespace tallerbiblioteca.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Estado")] Rol rol)
         {
+            Console.WriteLine("estamos en editar");
             if (id != rol.Id)
             {
                 return NotFound();
@@ -113,8 +134,7 @@ namespace tallerbiblioteca.Controllers
             {
                 try
                 {
-                    _context.Update(rol);
-                    await _context.SaveChangesAsync();
+                    MensajeRespuestaValidacionPermiso(await _rol_services.Editar(User,rol));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -131,6 +151,12 @@ namespace tallerbiblioteca.Controllers
             }
             return View(rol);
         }
+        
+         public void MensajeRespuestaValidacionPermiso(ResponseModel resultado){
+            
+            TempData["Mensaje"] = JsonConvert.SerializeObject(resultado);
+            
+        }  
 
         // GET: Rol/Delete/5
         public async Task<IActionResult> Delete(int? id)

@@ -1,0 +1,60 @@
+﻿@model tallerbiblioteca.Models.Devolucion
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Devolucion</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" id="formulario" onsubmit="sendForm(event)">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Id_prestamo" class="control-label"></label>
+                <select asp-for="Id_prestamo" class="form-control" asp-items="ViewBag.Id_prestamo"></select>
+                <span asp-validation-for="Id_prestamo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Observaciones" class="control-label"></label>
+                <input asp-for="Observaciones" class="form-control" />
+                <span asp-validation-for="Observaciones" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fecha_devolucion" class="control-label"></label>
+                <input asp-for="Fecha_devolucion" class="form-control" />
+                <span asp-validation-for="Fecha_devolucion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="boton boton-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <button class="mt-2 botonDelete Deletemedium"> <a asp-action="Index">Regresar</a></button>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function sendForm(e){
+            e.preventDefault();
+            Swal.fire({
+                title: 'Quieres guardar los cambios?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'SI'
+            }).then((resultado)=>{
+                if (resultado.isConfirmed){
+                    const formulario = document.getElementById("formulario")
+                    formulario.submit();
+                }
+            })
+        }
+    </script>
+}

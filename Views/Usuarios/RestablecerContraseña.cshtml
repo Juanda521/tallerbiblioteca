@@ -1,0 +1,47 @@
+@model tallerbiblioteca.Models.Usuario;
+@{
+    ViewData["Title"] = "Reestablecer contraseña";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<h2>Reestablece tu contraseña</h2>
+<div>
+    <form asp-action="restablecer" onsubmit="return validarContraseñas()">
+        <div class="col-md-4">
+            <label for="contraseña">Digita nueva contraseña</label>
+            <input type="password" class="form-control" id="contraseña" name="contraseña" placeholder="Digita nueva contraseña" required>
+        </div>
+        <div class="col-md-4">
+            <label for="confirmar">Confirma contraseña</label>
+            <input type="password" class="form-control" id="confirmar" name="confirmar" placeholder="Confirma tu nueva contraseña" required>
+        </div>
+        <br>
+         @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+            {
+                <p class="text-danger fs-5">@ViewData["ErrorMessage"]</p>
+            }
+        <div class="col-md-10">
+            <button type="submit" class="boton boton-primary">Enviar</button>
+        </div>
+    </form>
+    <button class="mt-4 boton boton-secondary "><a asp-action="Recuperar">regresar</a></button>
+
+    <script>
+        function validarContraseñas() {
+            var contraseña = document.getElementById('contraseña').value;
+            var confirmar = document.getElementById('confirmar').value;
+
+            if (contraseña !== confirmar) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Las contraseñas no coinciden.',
+                });
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</div>

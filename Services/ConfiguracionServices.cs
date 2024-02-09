@@ -12,10 +12,10 @@ namespace tallerbiblioteca.Services
         private RolServices _rolServices;
         private PermisosServices _permisosServices;
 
-        public ConfiguracionServices(BibliotecaDbContext context)
+        public ConfiguracionServices(BibliotecaDbContext context,RolServices rolServices)
         {
             _context = context;
-            _rolServices = new RolServices(_context);
+            _rolServices = rolServices;
             _permisosServices = new PermisosServices(_context);
             
         }
@@ -33,6 +33,17 @@ namespace tallerbiblioteca.Services
         public List<Permiso> ObtenerPermisos(){
              return  _permisosServices.ObtenerPermisos();
         }
+
+        public void RegistrarExcel(Matriculados matriculado){
+            _context.Matriculados.Add(matriculado);
+            Console.WriteLine("lo ha agregado al contex");
+        }
+
+         public void guardarUsuariosFromExcel(){
+            _context.SaveChanges();
+            Console.WriteLine("los ha agregado a la base de datos");
+        }
+
 
         public List<Permiso> PermisosNoAsociados(int Id_rol)
         {
@@ -80,7 +91,7 @@ namespace tallerbiblioteca.Services
             if (config != null)
             {
                 _context.Configuracion.Remove(config);
-                Console.WriteLine("ya debio haber eliminado");
+                
             }
             return (await _context.SaveChangesAsync() > 0) ? true : false;
         }
@@ -93,23 +104,20 @@ namespace tallerbiblioteca.Services
         public int ValidacionConfiguracionActiva(string nombre, int Id_rol)
         {
 
-            Console.WriteLine("<--------------------------->");
-             Console.WriteLine(Id_rol);
-             Console.WriteLine(nombre);
+         
             int Status;
             var permiso = _context.Permisos.FirstOrDefault(p => p.Nombre == nombre);
 
          
             if (permiso != null)
             {
-                Console.WriteLine("este es el id del permiso");
-                Console.WriteLine(permiso.Id);
-                Console.WriteLine(permiso.Nombre);
+               
+            
                 var rol = _context.Configuracion.FirstOrDefault(c => c.Id_rol == Id_rol && c.Id_permiso == permiso.Id);
 
                 if (rol != null)
                 {
-                    Console.WriteLine("si esta encontrando el rol");
+                   
                     var config = _context.Configuracion.FirstOrDefault(c => c.Id_permiso == permiso.Id);
                     if (config != null)
                     {
@@ -126,7 +134,7 @@ namespace tallerbiblioteca.Services
                 }
                 //el permiso no esta asociado al rol del usuario en linea
                 
-                     Console.WriteLine("no esta encontrando el rol");
+                 
                 Status = 401;
                 return Status;
             }
@@ -192,7 +200,7 @@ namespace tallerbiblioteca.Services
                 {
                     if (configuracionViewModel.ConfiguracionesUsuario == null)
                     {
-                        configuracionViewModel.ConfiguracionesUsuario = new List<Configuracion>(); // Inicializa la lista si es nula
+                        configuracionViewModel.ConfiguracionesUsuario = new List<Configuracion>(); // Inicializamos la lista si es nula
                     }
                     configuracionViewModel.ConfiguracionesUsuario.AddRange(configuracionesRol);
                    
@@ -201,7 +209,7 @@ namespace tallerbiblioteca.Services
                 {
                     if (configuracionViewModel.ConfiguracionesAlfabetizador == null)
                     {
-                        configuracionViewModel.ConfiguracionesAlfabetizador = new List<Configuracion>(); // Inicializa la lista si es nula
+                        configuracionViewModel.ConfiguracionesAlfabetizador = new List<Configuracion>(); // Inicializamos la lista si es nula
                     }
                     configuracionViewModel.ConfiguracionesAlfabetizador.AddRange(configuracionesRol);
                   

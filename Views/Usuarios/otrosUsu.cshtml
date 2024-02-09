@@ -60,14 +60,14 @@
                 </td>
 
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                    <a asp-action="Inhabilitar" asp-route-id="@item.Id" class="btn btn-danger">Inhabilitar</a>
-                    <a asp-action="Suspender" asp-route-id="@item.Id" class="btn btn-danger">Suspender</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="boton boton-primary">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="boton boton-success">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="boton boton-danger">Delete</a>
+                    <a asp-action="Inhabilitar" asp-route-id="@item.Id" class="boton boton-danger">Inhabilitar</a>
+                    <a asp-action="Suspender" asp-route-id="@item.Id" class="boton boton-danger">Suspender</a>
                     @if (item.Estado == "Suspendido" || item.Estado == "Inhabilitado")
                     {
-                        <a asp-action="eliminarsan" asp-route-id="@item.Id" class="btn btn-success">Eliminar @item.Estado</a>
+                        <a asp-action="eliminarsan" asp-route-id="@item.Id" class="boton boton-success">Eliminar @item.Estado</a>
                     }
                 </td>
             </tr>
@@ -76,7 +76,7 @@
 </table>
 <div class="container-fluid">
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <button type="button" class="boton boton-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Launch demo modal
     </button>
 
@@ -86,20 +86,20 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="boton-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     ...
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="boton boton-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="boton boton-primary">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="boton boton-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Dropdown button
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

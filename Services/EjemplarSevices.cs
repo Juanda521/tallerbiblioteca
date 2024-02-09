@@ -15,17 +15,25 @@ namespace tallerbiblioteca.Services
         private readonly BibliotecaDbContext _context;
         private int Status;
         private ConfiguracionServices _configuracionServices;
+        public LibrosServices _librosServices;
       
-        public EjemplarServices(BibliotecaDbContext bibliotecaDbContext)
+        public EjemplarServices(BibliotecaDbContext bibliotecaDbContext,LibrosServices librosServices,ConfiguracionServices configuracionServices)
         {
             _context = bibliotecaDbContext;
-            _configuracionServices = new ConfiguracionServices(_context);
+            _configuracionServices = configuracionServices;
+            _librosServices = librosServices;
           
+        }
+
+        public async Task<Libro> BuscarLibro(int id){
+            
+            return await _librosServices.BuscarLibroAsync(id);
         }
 
         public int ValidacionConfiguracionActiva(string nombre,int Id_rol){
             return   Status = _configuracionServices.ValidacionConfiguracionActiva(nombre, Id_rol);
         }
+
 
 
 
@@ -99,6 +107,8 @@ namespace tallerbiblioteca.Services
             switch (Status)
             {
                 case 200:
+                Console.WriteLine($"el id del libro a relacionar es: {ejemplar.Id_libro}");
+                    ejemplar.EstadoEjemplar  = "DISPONIBLE";
                     var Libro = await _context.Libros.FindAsync(ejemplar.Id_libro);
                     if (Libro!=null){
                         Libro.CantidadLibros++;

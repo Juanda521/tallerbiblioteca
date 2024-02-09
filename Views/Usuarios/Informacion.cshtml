@@ -1,0 +1,33 @@
+﻿@model tallerbiblioteca.Models.usuarioo
+<h1 style="color: red">NOTAS</h1>
+<h3 style="color: black">@Model.Mensaje</h3>
+<h4 style="color: black">@Model.NombreLibro</h4>
+<h4 style="color: black">@Model.fechaa</h4>
+<div>
+    <h4>Usuario</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            <p>Nombre</p>
+        </dt>
+        <dd class="col-sm-10">
+            <p>@Model.Name</p>
+        </dd>
+        <dt class="col-sm-2">
+            <p>Apellido</p>
+        </dt>
+        <dd class="col-sm-10">
+            <p>@Model.Apellido</p>
+        </dd>
+        <dt class="col-sm-2">
+            <p>Correo</p>
+        </dt>
+        <dd class="col-sm-10">
+            <p>@Model.Correo</p>
+        </dd>
+    </dl>
+
+</div>
+<div>
+    <a class="boton medium" asp-action="Index">Volver</a>
+</div>

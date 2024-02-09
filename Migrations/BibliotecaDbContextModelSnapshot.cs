@@ -30,6 +30,10 @@ namespace tallerbiblioteca.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("NombreAutor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -89,6 +93,31 @@ namespace tallerbiblioteca.Migrations
                     b.ToTable("Configuracion");
                 });
 
+            modelBuilder.Entity("tallerbiblioteca.Models.Devolucion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Fecha_devolucion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id_prestamo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Observaciones")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id_prestamo");
+
+                    b.ToTable("Devoluciones");
+                });
+
             modelBuilder.Entity("tallerbiblioteca.Models.Ejemplar", b =>
                 {
                     b.Property<int>("Id")
@@ -122,6 +151,10 @@ namespace tallerbiblioteca.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NombreGenero")
                         .IsRequired()
@@ -170,6 +203,10 @@ namespace tallerbiblioteca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImagenLibro")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -181,6 +218,30 @@ namespace tallerbiblioteca.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Libros");
+                });
+
+            modelBuilder.Entity("tallerbiblioteca.Models.Matriculados", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("Documento")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Matriculados");
                 });
 
             modelBuilder.Entity("tallerbiblioteca.Models.Permiso", b =>
@@ -250,7 +311,7 @@ namespace tallerbiblioteca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Fecha_fin")
+                    b.Property<DateTime>("Fecha_fin")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Fecha_inicio")
@@ -264,6 +325,45 @@ namespace tallerbiblioteca.Migrations
                     b.HasIndex("Id_peticion");
 
                     b.ToTable("Prestamos");
+                });
+
+            modelBuilder.Entity("tallerbiblioteca.Models.Publicaciones", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaFin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("Imagen")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Publicaciones");
                 });
 
             modelBuilder.Entity("tallerbiblioteca.Models.Rol", b =>
@@ -285,6 +385,31 @@ namespace tallerbiblioteca.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Rol");
+                });
+
+            modelBuilder.Entity("tallerbiblioteca.Models.Sancion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Fecha_Sancion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id_devolucion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Motivo_sancion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id_devolucion");
+
+                    b.ToTable("Sanciones");
                 });
 
             modelBuilder.Entity("tallerbiblioteca.Models.Usuario", b =>
@@ -318,8 +443,8 @@ namespace tallerbiblioteca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Numero_documento")
-                        .HasColumnType("int");
+                    b.Property<long>("Numero_documento")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -364,6 +489,17 @@ namespace tallerbiblioteca.Migrations
                     b.Navigation("Permiso");
 
                     b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("tallerbiblioteca.Models.Devolucion", b =>
+                {
+                    b.HasOne("tallerbiblioteca.Models.Prestamo", "Prestamo")
+                        .WithMany()
+                        .HasForeignKey("Id_prestamo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Prestamo");
                 });
 
             modelBuilder.Entity("tallerbiblioteca.Models.Ejemplar", b =>
@@ -424,6 +560,17 @@ namespace tallerbiblioteca.Migrations
                         .IsRequired();
 
                     b.Navigation("Peticion");
+                });
+
+            modelBuilder.Entity("tallerbiblioteca.Models.Sancion", b =>
+                {
+                    b.HasOne("tallerbiblioteca.Models.Devolucion", "Devolucion")
+                        .WithMany()
+                        .HasForeignKey("Id_devolucion")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Devolucion");
                 });
 
             modelBuilder.Entity("tallerbiblioteca.Models.Usuario", b =>

@@ -62,7 +62,7 @@ namespace tallerbiblioteca.Migrations
                     .Annotation("SqlServer:Identity", "1, 1"),
                 Id_libro = table.Column<int>(type: "int", nullable: false),
                 Isbn_libro = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Estado = table.Column<string>(type: "nvarchar(max)", nullable: false,defaultValue:"ACTIVO"),
+                EstadoEjemplar = table.Column<string>(type: "nvarchar(max)", nullable: false,defaultValue:"ACTIVO"),
                  
               }, constraints: table =>
               {

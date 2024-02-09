@@ -1,0 +1,60 @@
+﻿@using System.Security.Claims;
+@using tallerbiblioteca.Controllers
+@model PaginacionPubli<Publicaciones>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<link rel="stylesheet" href="~/css/Publicaciones.css" asp-append-version="true" /> 
+<div class="">
+    <h1>Publicaciones</h1>
+    @if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
+    {
+        <a asp-action="Create" class="boton">Crear nueva publicación</a>
+    }
+</div>
+
+<div class="container">
+    @foreach (var item in Model.Publicaciones)
+    {
+        <div class="card">
+            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(item.Imagen))" class="card-img" alt="Imagen">
+            <div class="card-content">
+                <h5 class="card-title">@item.Tipo</h5>
+                <p class="card-description">@item.Nombre</p>
+                <div class="card-dates">
+                    <p>Fecha de inicio: @item.FechaInicio</p>
+                    <p>Fecha de fin: @item.FechaFin</p>
+                </div>
+                @if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
+                {
+                    <div class="card-buttons">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="boton me-3 ">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="botonDelete Deletemedium">Desactivar </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <div class="pagination p1">
+        <ul>
+            <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+            <a href="?pagina=@(Model.PageNumber - 1)&busqueda=@Context.Request.Query["busqueda"]">
+            <li><<</li></a>
+            @for (var i = 1; i <= Model.TotalItems; i++)
+            {
+
+                <a class=" me-1 @(Model.PageNumber == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+
+            }
+            @if (Model.PageNumber < Model.TotalItems)
+            {
+
+                <a href="?pagina=@(Model.PageNumber + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
+
+            }
+            <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">
+            <li>Fin</li></a>
+        </ul>
+    </div>
+</div>

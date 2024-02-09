@@ -2,11 +2,14 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+ 
+
+
 
 
 document.addEventListener("DOMContentLoaded", function () {
     // Hacer una solicitud a la API para obtener los datos
-    fetch("/api/notificaciones")
+    fetch("/api/Notificaciones")
         .then(response => response.json()) // Suponiendo que los datos son un JSON
         .then(data => {
          
@@ -20,11 +23,17 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.length > 0) {
                 data.forEach(item => {
                     const notificacion = document.createElement("li");
-                    if (item.usuario && item.usuario.name) {
-                        notificacion.textContent = `${item.usuario.name} ha solicitado. ${item.motivo}`;
-                    } else {
-                        notificacion.textContent = `Alguien ha solicitado. ${item.motivo}`;
+                    if(item.estado != "ACEPTADA" && item.estado != "RECHAZADA"){
+                        if (item.usuario && item.usuario.name) {
+                            notificacion.textContent = `${item.usuario.name} ha solicitado. ${item.motivo}`;
+                        } else {
+                            notificacion.textContent = `Alguien ha solicitado. ${item.motivo}`;
+                        }
+                    }else{
+                        console.log("la peticion ya se ha aceptado");
+                        notificacionesContainer.innerHTML = "<li>No hay notificaciones nuevas.</li>";
                     }
+                   
                     notificacionesContainer.appendChild(notificacion);
                 });
                 // Cambiar el color del ícono
@@ -39,4 +48,9 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error(error));
 });
+
+
+
+
+
 

@@ -19,16 +19,14 @@
                 <span asp-validation-for="NombreGenero" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button type="submit">Editar</button>
-               
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <button class="mt-2"><a asp-action="Index">Back to List</a></button>
-    
+    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

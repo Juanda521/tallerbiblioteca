@@ -53,10 +53,8 @@ namespace tallerbiblioteca.Services
             return new(){
                 Para  = prestamo.Peticion.Usuario.Correo,
                 Asunto = "Peticion Confirmada",
-                Contenido = "Tu Peticion por prestamo del libro: "
-                + prestamo.Peticion.Ejemplar.Libro.Nombre
-                + " ha sido aceptada, puedes acercarte a la institucion por el libro solicitado. \n Recuerda devolver el ejemplar en la fecha siguiente: " + prestamo.Fecha_fin +" para evitar ser sancionado"
-                
+                Contenido = $"Tu Peticion por prestamo del libro: {prestamo.Peticion.Ejemplar.Libro.Nombre}  ha sido aceptada, puedes acercarte a la institucion por el libro solicitado. \n Recuerda devolver el ejemplar en la fecha siguiente:  {prestamo.Fecha_fin} para evitar ser sancionado "
+    
             };
         }
 
@@ -68,19 +66,18 @@ namespace tallerbiblioteca.Services
             };
         }
 
+        public SendEmailDTO EmailRecuperarContraseña(Usuario usuario,int Codigo)
+        {
+            return new()
+            {
+                Para = usuario.Correo,
+                Asunto = "Recuperacion de contraseña",
+                Contenido = $@"Has solicitado el cambio de tu contraseña. el siguiente codigo te permitira
+                restablecer tu contraseña
+                <span style=""font-size: 24px; display: block; text-align: center; margin-top: 10px"">
+                {Codigo}</span>"
+            };
+        }
 
-        // public SendEmailDTO EmailSancion(Sancion sancion){
-        //      return new(){
-        //         Para  = "",
-        //         Asunto = "Peticion de Prestamo de Libro",
-        //         Contenido = "La persona "+ peticion.Usuario.Nombre + " ha solicitado el prestamo del libro "+peticion.Ejemplar.Libro.Nombre " ingresa al aplicativo para obtener mas informacion y aceptar o rechazar la peticion"
-        //     };
-        // }
-
-        
-
-       
-
-        
     }
 }

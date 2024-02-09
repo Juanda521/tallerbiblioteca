@@ -4,14 +4,40 @@
 @{
     ViewData["Title"] = "Configuracion";
 }
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script> 
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/js/bootstrap-select.min.js"></script>
+
+
+
+
+<form id="formCambiarCampoPermiso" method="post"asp-controller="Configuracion" asp-action="Edit">
+    <input type="hidden" id="configId" name="Id" value="">
+</form>
 
 <div class="container-fluid">
-    <button>
-        <a  asp-action="UsuariosInactivos">Usuarios Inactivos</a>
-    </button>
-    
-  
-    <h1 class="mb-2 text-dark ">permisos activos</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <button>
+                <a class="boton medium mb-2"  asp-action="UsuariosInactivos">Usuarios Inactivos</a>
+            </button>
+        </div>
+        <div class="col-md-4">
+            @using (Html.BeginForm("SubirArchivo", "Configuracion", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <input type="file" name="archivoCsv" />
+                <input type="submit" value="Subir Archivo" />
+            }
+        </div>
+        <div class="col-md-4">
+            <form method="post" asp-controller="Backup" asp-action="DownloadBackup">
+                <button class="boton medium" name="descarga" value="true" type="submit">Realizar Copia de Seguridad</button>
+            </form>
+        </div>
+
+    </div>
+   
 
     <div class="row text-center p-1">
     
@@ -24,52 +50,36 @@
                 <div class="container p-2"  style="max-height: 550px; overflow-y: auto;">
                     <h3>@rol.Nombre</h3>
 
+                        <button class="boton medium" type="button"  data-bs-toggle="modal" data-bs-target="#create_@rol.Id">
+                        Registrar
+                    </button>
                    @switch(rol.Id){
                        case 1:
                             @if (Model.ConfiguracionesAdmin != null)
                             {
                                 @foreach (var config in Model.ConfiguracionesAdmin)
                                 {
-                                    <div class="row mb-2 border-bottom border-dark" >
-                                        <div class="col-4">
-                                            <p>@config.Permiso.Nombre</p>
+                                    <div class="row mb-2 border-bottom border-dark">
+                                        <div class="col-12 col-md-3 col-sm-3 col-xs-12 mb-2">
+                                            <p >@config.Permiso.Nombre</p>
                                         </div>
-                                        <div class="col-4">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <form asp-action="Edit" asp-route-id="@config.Id" method="post">
-                                                        @Html.AntiForgeryToken()
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <label class="toggle-switch">
-                                                                        <input type="checkbox" class="checkboxEstadoPermiso" name="chk" @if (config.Estado == "ACTIVO")
-                                                                        {
-                                                                            <text>checked</text>
-                                                                        } />
-                                                                        <span class="slider"></span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="col-8">
-                                                                 <button type="submit" onclick="chk.checked = !chk.checked" > editar</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <div class="col-6 ms-n4">
-                                                    <p>@config.Estado</p>
-                                                </div>
-                                            </div>
+                                        <div class="col-12 col-md-3 col-sm-3 col-xs-12 mb-2 d-flex justify-content-center">
+                                           
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" class="chkCambiarPermiso"  @(config.Estado == "ACTIVO" ? "checked" : "") data-config-id="@config.Id" />
+                                                    <span class="slider"></span>
+                                                </label>
                                         </div>
-                                        <div class="col-4">
-                                        
-                                            <form asp-action="Delete" asp-route-id="@config.Id" id="form_@config.Id" method="post" onsubmit="sendForm(event, @config.Id)" >
+                                         <div class="col-12 col-md-3 col-sm-3 col-xs-12 mb-2">
+                                                    <p style="color: @(config.Estado == "INACTIVO" ? "red" : "green")">@config.Estado</p>
+                                                </div>
+                                        <div class="col-12 col-md-3 col-sm-3 col-xs-12 mb-2 d-flex justify-content-center">
+                                            <form asp-action="Delete" asp-route-id="@config.Id" id="form_@config.Id" method="post" onsubmit="sendFormDelete(event, @config.Id)">
                                                 @Html.AntiForgeryToken()
-                                                <button  type="submit">
-                                                    <img src="~/Images/borrar.png" alt="no encontre la imagen" style="width: 20px; height: 20px;">
+                                                <button type="submit">
+                                                    <i class="fa-solid fa-trash fa-2xl" style="color: #827e7e;"></i>
                                                 </button>
-            
                                             </form>
-
                                         </div>
                                     </div>
                                  
@@ -83,41 +93,26 @@
                             @foreach (var config in Model.ConfiguracionesUsuario)
                             {
                                 <div class="row mb-2 border-bottom border-dark">
-                                    <div class="col-4">
+
+                                    <div class="col-12 col-md-3">
                                         <p>@config.Permiso.Nombre</p>
                                     </div>
-                                    <div class="col-4">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <form asp-action="Edit" asp-route-id="@config.Id" method="post">
-                                                        @Html.AntiForgeryToken()
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <label class="toggle-switch">
-                                                                        <input type="checkbox" class="checkboxEstadoPermiso" name="chk" @if (config.Estado == "ACTIVO")
-                                                                        {
-                                                                            <text>checked</text>
-                                                                        } />
-                                                                        <span class="slider"></span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="col-8">
-                                                                 <button type="submit" onclick="chk.checked = !chk.checked" > editar</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <div class="col-6 ms-n4">
-                                                    <p>@config.Estado</p>
-                                                </div>
-                                            </div>
-                                         
+
+                                   <div class="col-12 col-md-3 sm-4 mb-2"> 
+                                      
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" class="chkCambiarPermiso"  @(config.Estado == "ACTIVO" ? "checked" : "") data-config-id="@config.Id" />
+                                            <span class="slider"></span>
+                                        </label>
                                     </div>
-                                    <div class="col-4">
-                                            <form asp-action="Delete" asp-route-id="@config.Id" method="post"  id="form_@config.Id" onsubmit="sendForm(event, @config.Id)">
+                                    <div class="col-12 col-md-3">
+                                        <p style="color: @(config.Estado == "INACTIVO" ? "red" : "green")">@config.Estado</p>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                            <form asp-action="Delete" asp-route-id="@config.Id" method="post"  id="form_@config.Id" onsubmit="sendFormDelete(event, @config.Id)">
                                                 @Html.AntiForgeryToken()
                                                 <button type="submit">
-                                                    <img src="~/Images/borrar.png" alt="no encontre la imagen" style="width: 20px; height: 20px;">
+                                                  <i class="fa-solid fa-trash fa-2xl" style="color: #827e7e ;"></i>
                                                 </button>
 
                                             </form>
@@ -133,40 +128,27 @@
                                 @foreach (var config in Model.ConfiguracionesAlfabetizador)
                                 {
                                     <div class="row mb-2 border-bottom border-dark">
-                                        <div class="col-4">
+
+                                        <div class="col-12 col-md-3">
                                             <p>@config.Permiso.Nombre</p>
                                         </div>
-                                        <div class="col-4">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <form asp-action="Edit" asp-route-id="@config.Id" method="post">
-                                                        @Html.AntiForgeryToken()
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <label class="toggle-switch">
-                                                                        <input type="checkbox" class="checkboxEstadoPermiso" name="chk" @if (config.Estado == "ACTIVO")
-                                                                        {
-                                                                            <text>checked</text>
-                                                                        } />
-                                                                        <span class="slider"></span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="col-8">
-                                                                 <button type="submit" onclick="chk.checked = !chk.checked" > editar</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <div class="col-6 ms-n4">
-                                                    <p>@config.Estado</p>
-                                                </div>
-                                            </div>
+
+                                        <div class="col-12 col-md-3 sm-4 mb-2"> 
+                                             <label class="toggle-switch">
+                                                    <input type="checkbox" class="chkCambiarPermiso"  @(config.Estado == "ACTIVO" ? "checked" : "") data-config-id="@config.Id" />
+                                                    <span class="slider"></span>
+                                                </label>
                                         </div>
-                                        <div class="col-4">
-                                            <form asp-action="Delete" asp-route-id="@config.Id" method="post" id="form_@config.Id" onsubmit="sendForm(event, @config.Id)">
+                                        <div class="col-12 col-md-3 ms-n4">
+                                            <p style="color: @(config.Estado == "INACTIVO" ? "red" : "green")">@config.Estado</p>
+                                        </div>
+                                            
+                                        
+                                        <div class="col-12 col-md-3">
+                                            <form asp-action="Delete" asp-route-id="@config.Id" method="post" id="form_@config.Id" onsubmit="sendFormDelete(event, @config.Id)">
                                                 @Html.AntiForgeryToken()
                                                 <button  type="submit">
-                                                    <img src="~/Images/borrar.png" alt="no encontre la imagen" style="width: 20px; height: 20px;">
+                                                   <i class="fa-solid fa-trash fa-2xl" style="color: #827e7e;"></i>
                                                 </button>
 
                                             </form>
@@ -176,17 +158,15 @@
                             }
                         break;
                    }
-                    <button type="button"  data-bs-toggle="modal" data-bs-target="#create_@rol.Id">
-                        Registrar
-                    </button>
+                 
 
-                    <!-- Modal -->
+                    @* <!-- Modal --> *@
                     <div class="modal fade" id="create_@rol.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">@rol.Nombre</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="boton-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <h6>Asignar permiso al rol: @rol.Nombre</h6>
@@ -197,15 +177,15 @@
                                            
                                         </div>
                                         <div class="form-group">
-                                            <label asp-for="@Model.Configuracion.Id_permiso" class="control-label"></label>
+                                            <label  class="control-label">Nombre Permiso</label>
                                             @if(rol.Id == 01)
                                             {
-                                              <select asp-for="@Model.Configuracion.Id_permiso" class="form-control" asp-items="ViewBag.PermisosNoAsociadosAdmin"></select>
+                                              <select asp-for="@Model.Configuracion.Id_permiso" class="selectpicker" data-width="75%" title="Escoja el nombre del permiso a asignar" data-live-search="true" asp-items="ViewBag.PermisosNoAsociadosAdmin"></select>
                                             }else if(rol.Id == 02)
                                             {
-                                              <select asp-for="@Model.Configuracion.Id_permiso" class="form-control" asp-items="ViewBag.PermisosNoAsociadosUser"></select>
+                                              <select asp-for="@Model.Configuracion.Id_permiso" class="selectpicker" data-width="75%" title="Escoja el nombre del permiso a asignar" data-live-search="true" asp-items="ViewBag.PermisosNoAsociadosUser"></select>
                                             }else{
-                                                <select asp-for="@Model.Configuracion.Id_permiso" class="form-control" asp-items="ViewBag.PermisosNoAsociadosAlfa"></select>
+                                                <select asp-for="@Model.Configuracion.Id_permiso" class="selectpicker" data-width="75%" title="Escoja el nombre del permiso a asignar" data-live-search="true" asp-items="ViewBag.PermisosNoAsociadosAlfa"></select>
                                             }
                                         </div>     
                                         <div class="form-group">
@@ -214,7 +194,7 @@
                                             <span asp-validation-for="@Model.Configuracion.Estado" class="text-danger"></span>
                                         </div>
                                         <div class="form-group mt-2">
-                                           <button type="submit">registrar</button>
+                                           <button class="boton medium" type="submit">registrar</button>
                                         </div>
                                     </form>
                                 </div>
@@ -228,8 +208,29 @@
     </div>
 
 
+ 
+@{
+    var descargaFinalizada = TempData["descargaFinalizada"] as bool?;
+}
+
+@if (descargaFinalizada.HasValue && descargaFinalizada.Value)
+{
+    <script>
+        console.log("Va a ver el mensaje");
+    </script>
+}
+else
+{
+    <script>
+        console.log("No va a ver el mensaje");
+    </script>
+}
+
+
 
 @section Scripts {
+
+   
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
         var Mensaje =  TempData["Mensaje"] as string;
@@ -241,37 +242,11 @@
                 MostrarMensajeUsuarios(icono, cuerpo);
             </script>
         }
-         <script>
-            function sendForm(e,idConfig) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Seguro que deseas eliminar esta configuracion?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'SI'
-                }).then((resultado) => {
-                    if (resultado.isConfirmed) {
-                        const formulario = document.getElementById("form_"+idConfig)
-                        console.log(formulario)
-                        formulario.submit();
-                    }
-            })
-        }
-    </script>
- 
     }
-  }  
-    @* var checkboxEstadoPermiso = document.querySelectorAll('.checkboxEstadoPermiso');
-        checkboxEstadoPermiso.forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                // Obtener el elemento de párrafo hermano que muestra el estado
-                var estadoElement = this.closest('.col-4').nextElementSibling.querySelector('p');
-
-                // Actualizar el contenido del párrafo hermano según el estado del switch
-                estadoElement.textContent = this.checked ? 'ACTIVO' : 'INACTIVO';
-            });
-        }); *@
-
+ 
+}
+  
+   
        
     
 

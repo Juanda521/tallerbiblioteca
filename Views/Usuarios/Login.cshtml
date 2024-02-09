@@ -3,6 +3,8 @@
     Layout = null;
 }
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,21 +49,39 @@
             <div class="col-md-6 ">
                 <div class="row align-items-center">
                     <div class="header-text mb-4">
-                         <form asp-action="Login">
+                         <form asp-action="Login" id="loginForm">
                             <div class="form-group">
-                                <label  class="control-label text-dark">Numero De Documento</label>
-                                <input asp-for="Numero_documento" class="form-control" />
-                                <span asp-validation-for="Numero_documento" class="text-danger"></span>
+                                <label  class="control-label ">Número de documento</label>
+                                <input asp-for="Numero_documento" id="Numero_documento" class="form-control"  data-val="true" data-val-required="Ingresa este campo por favor" />
+                                <span id="numeroDocumentoError" class="text-light"></span>
+                                @* <span asp-validation-for="Numero_documento" class="text-danger"></span> *@
+                            
                             </div>
-                            <div class="form-group">
+                            <div class="form-group ">
                                 <label asp-for="Contraseña" class="control-label text-dark"></label>
-                                <input asp-for="Contraseña" class="form-control" type="password" />
-                                <span asp-validation-for="Contraseña" class="text-danger"></span>
+                                <input asp-for="Contraseña" id="Contraseña" class="form-control" type="password" />
+                                <span asp-validation-for="Contraseña" id="ContraseñaError"  class="text-light"></span>
                             </div>
                             <div class="form-group mt-2">
-                                <input type="submit" value="Login" class="btn btn-dark" />
+                                <input type="submit" value="Iniciar Session" class="btn btn-dark" onclick="validateForm(event)" />
                             </div>
+                               <small><a asp-area="" asp-controller="Usuarios" asp-action="Recuperar" class="text-light">¿Has olvidado tu contraseña?</a></small> 
                         </form>
+
+                        @if (!string.IsNullOrEmpty(TempData["succesfullMessage"]?.ToString()))
+                        {
+                            <p class="text-danger fs-5">@TempData["succesfullMessage"]</p>
+                            <script>
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    title: 'Contraseña Restablecida ',
+                                    text : '@TempData["succesfullMessage"]'
+                                    showConfirmButton: true,
+                                });
+                            </script>
+                        }
+                     
                       
                        
                 
@@ -70,9 +90,63 @@
             </div>
         </div>
     </div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+    @section Scripts {
+     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
    
 
       <script>
+        function validateForm(event) {
+    // Evitar que el formulario se envíe automáticamente
+    event.preventDefault();
+
+    console.log("entramos en login")
+    // Obtener el valor del campo Numero_documento
+    var numeroDocumentoValue = document.getElementById("Numero_documento").value;
+
+    // Obtener el elemento span para mostrar mensajes de error
+    var numeroDocumentoError = document.getElementById("numeroDocumentoError");
+
+    var ContraseñaValue = document.getElementById("Contraseña").value;
+
+    // Obtener el elemento span para mostrar mensajes de error
+    var ContraseñaError = document.getElementById("ContraseñaError");
+    var Contraseña  =false;
+    var documento  =false;
+    // Verificar si el campo Numero_documento está vacío
+    if (numeroDocumentoValue.trim() === "") {
+        numeroDocumentoError.innerText = "Este campo es obligatorio.";
+        console.log("el campo numero de documento esta vacio");
+        
+    } else{
+        documento  =true;
+    }
+
+    if (ContraseñaValue.trim() === "") {
+        ContraseñaError.innerText = "Este campo es obligatorio.";
+        console.log("el campo Contraseña esta vacio");
+       
+
+    }else{
+        Contraseña  = true;
+    }
+    
+
+    if (documento  && Contraseña){
+
+          // Limpiar el mensaje de error si el campo no está vacío
+        numeroDocumentoError.innerText = "";
+
+        console.log("los dos estan en true");
+
+        // Si el campo no está vacío, enviar el formulario
+        document.getElementById("loginForm").submit();
+    }
+  
+}
                
                 var errorMessage = '@TempData["ErrorMessage"]';
                 if (errorMessage) {
@@ -95,8 +169,10 @@
             </script>
         @if (ViewData["Iniciar"] != null && ViewData["Iniciar"].ToString() == "true")
         {
+            
                 <script>
-                Swal.fire({
+                    console.log("todo salio bien y vamos a iniciar session");
+                    Swal.fire({
                     position: 'center',
                     icon: 'success',
                     title: 'Iniciando sesión',
@@ -119,6 +195,8 @@
             });
         </script>
     }
+
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
 </html>

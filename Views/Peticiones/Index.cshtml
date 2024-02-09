@@ -1,100 +1,135 @@
-
-@* @model IEnumerable<tallerbiblioteca.Models.Peticiones> *@
-    @model tallerbiblioteca.Models.PeticionesViewModel
+@model Paginacion<Peticiones>
 
 @{
     ViewData["Title"] = "Index";
 }
+<div class="row">
+    <div class="col-4 justify-content-between">    
+            <a class="boton medium me-2" asp-action="Create">Registrar</a>
+            <a class="boton medium" asp-action="Rechazadas">Peticiones rechazadas</a>
+       
+    </div>
+    <div class=" col-md-4">
+            <form asp-action="BuscarFiltro" class="ms-4">
+                <p class="mb-0">
+                    <label>Fecha de Peticion:</label>
+                    <span>DESDE: </span>
+                    <input type="date" name="fechaInicio" class="form-control" />
 
-<p>
-    <a class = "btn btn-success"asp-action="Create">Nueva Peticion </a>
-</p>
-<table class="table col-12">
-    <thead>
-        <tr>
-            <th>
-                @* @Html.DisplayNameFor(model => model.Id) *@
-                id
-            </th>
-            <th>
-                @* @Html.DisplayNameFor(model => model.Id_ejemplar) *@
-                id ejemplar
-            </th>
-            <th>
-                @* @Html.DisplayNameFor(model => model.Id_usuario) *@
-                id_usuario
-            </th>
-            <th>
-                @* @Html.DisplayNameFor(model => model.FechaPeticion) *@
-                FechaPeticion
-            </th>
-            <th>
-                @* @Html.DisplayNameFor(model => model.Motivo) *@
-                motivo
-            </th>
-              <th>
-                @* @Html.DisplayNameFor(model => model.Motivo) *@
-                Estado
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Peticiones) {
-        <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id_ejemplar)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id_usuario)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaPeticion)
-                </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Motivo)
-            </td>
-              <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                <form asp-controller="Prestamos" asp-action="Create"  >
-                    <input asp-for="@Model.Prestamo.Id_peticion" value="@item.Id"  type="hidden">
-                    
+                    <span> HASTA: </span>
+                    <input type="date" name="fechaFin" class="form-control" />
+                    <button type="submit" class="mt-2 boton medium">Buscar</button>
+                </p>
+            </form>
+    </div>
+    <div class="col-md-4 pt-2">
+         <form asp-action="BuscarFiltro" class="ms-4">
+            <p class="mb-0">
+                <label>Filtro Busqueda</label>
+                <input type="text" name="busqueda" placeholder="Nombre-Apellido-NombreLibro " class="form-control" />
+                <button type="submit" class="mt-2 boton medium">Buscar</button>
+            </p>
+        </form>
+        <h1 class="fw-bold text-center pt-4">Peticiones</h1>
+    </div>
+    </div>
+    <table class="mt-2">
+        <thead>
+            <tr>
+                <th> Id </th>
+                <th> Id ejemplar</th>
+                <th> Nombre Libro</th>
+                <th> Nombre </th>
+                <th> Apellido </th>
+                <th> FechaPeticion </th>
+                <th> Motivo </th>
+                <th> Estado </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id_ejemplar)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ejemplar.Libro.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreUsuario)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.apellido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaPeticion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Motivo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Estado)
+                    </td>
+                    <td>
+                        @* <form asp-controller="Prestamos" asp-action="Create" method="post" >
+                    <input asp-for="@Model.PeticionesViewModel.Prestamo.Id_peticion" value="@item.Id"  type="hidden">
                     <button type="submit">aceptar</button>
-                </form> 
-                <button ><a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a></button>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                    </form>  *@
+                        <button class="d-inline"><a asp-controller="Prestamos" asp-action="Created" asp-route-id="@item.Id"><i class="fa-solid fa-circle-check fa-2xl" style="color: #83B440;"></i></a></button>
+                        <button class="d-inline ms-2"><a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark fa-2xl" style="color: #fa0000;"></i></a></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="pagination p1">
+            <ul>
+                <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+                <a href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]">
+                <li><<</li></a>
+                @for (var i = 1; i <= Model.TotalItems; i++)
+                {
 
-@section Scripts{
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    @{
-        var Mensaje =  TempData["Mensaje"] as string;
- 
-        if (Mensaje!=null){
-            var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
-        <script>
-             console.log("se va mostrar");
-             
-            const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
-            const icono = "@mensaje.Icono";
-            MostrarMensajeUsuarios(icono, cuerpo);
-        </script>
-          
-        }else{
-             <script>
-                console.log("jmm");
-            </script>
+                    <a class=" me-1 @(Model.Numero_pagina == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+
+                }
+                @if (Model.Numero_pagina < Model.TotalItems)
+                {
+
+                    <a href="?pagina=@(Model.Numero_pagina + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
+
+                }
+                <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">
+                <li>Fin</li></a>
+            </ul>
+        </div>
+    </div>
+
+    @section Scripts{
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
-      
+        @{
+            var Mensaje = TempData["Mensaje"] as string;
+
+            if (Mensaje != null)
+            {
+                var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+                <script>
+                    console.log("se va mostrar");
+
+                    const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+                    const icono = "@mensaje.Icono";
+                    MostrarMensajeUsuarios(icono, cuerpo);
+                </script>
+
+            }
+
+        }
     }
-}

@@ -3,10 +3,29 @@
  @model IEnumerable<tallerbiblioteca.Models.Prestamo>
 @{
     ViewData["Title"] = "Index";
+   
 }
 
-<!-- con solo este div permitiremos a js insertar el calendario gracias a la libreria fullcalendar-->
-<div id='calendar'></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<div class="row mb-2">
+    
+<input type="text" id="searchInput" placeholder="Buscar por número de documento o nombre de usuario...">
+</div>
+
+
+
+
+<input type="text" id="datePicker" placeholder="Selecciona una fecha">
+
+
+    <!-- con solo este div permitiremos a js insertar el calendario gracias a la libreria fullcalendar-->
+<div id='calendar' class="mt-5 pt-4"></div>
+
+
+
+
 
 <!-- este va ser el modal que se va abrir cuando le demos click a una fecha, esto por medio de js -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -14,20 +33,40 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Información de la Fecha</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                Fecha seleccionada: <span id="modal-date"></span>
-                <br>
-                Evento: <span id="modal-event"></span>
-                <br>
-                Usuario: <span id="modal-user"></span>
-                <br>
+            <div class="modal-body  text-dark">
+                @* <span id="modal-date"></span><p class="fw-bold">Fecha seleccionada </p> *@
+                
+                <span class="text-success" id="modal-event"></span> <p class="fw-bold">Evento</p>
+                
+                <span class="text-success" id="modal-id-usuario"> </span>  <p class="fw-bold">Identificacíon Usuario</p>
+               
+                <span class="text-success" id="modal-user"></span> <p class="fw-bold"> Nombre usuario</p>
+               
+                <span class="text-success" id="modal-libro"></span>  <p class="fw-bold"> Nombre Libro</p>
+                
+                <span class="text-danger" id="modal-fecha-fin"></span> <p class="fw-bold">Fecha Devolución </p>
+
+                @* <div id="carouselExample" class="carousel carousel-dark slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <!-- Los items del carrusel se agregarán dinámicamente aquí -->
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExample" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div> *@
+                
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -39,6 +78,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/EventManager.js"></script>
     @{
         var Mensaje =  TempData["Mensaje"] as string;
  

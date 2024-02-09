@@ -207,7 +207,7 @@ nav ul, nav ol{margin:0; padding:0; list-style:none;}
 table, th, td{border:1px solid; border-collapse:collapse; vertical-align:top;}
 table, th{table-layout:auto;}
 table{width:100%; margin-bottom:15px;}
-th, td{padding:5px 8px;}
+th, td{padding:10px 10px;}
 td{border-width:0 1px;}
 
 
@@ -245,7 +245,7 @@ td{border-width:0 1px;}
 
 /* Colours
 --------------------------------------------------------------------------------------------------------------- */
-body{color:#888888; background-color:#252B34;}
+body{color:#888888; background-color:#ffffff;}
 /* a{color:#82B440;} */
 a:active, a:focus{background:transparent;}/* IE10 + 11 Bugfix - prevents grey background */
 hr, .borderedbox{border-color:#D7D7D7;}
@@ -254,8 +254,11 @@ input:focus, textarea:focus, *:required:focus{border-color:#82B440;}
 .overlay{color:#FFFFFF; background-color:inherit;}
 .overlay::after{color:inherit; background-color:rgba(0,0,0,.55);}
 
-.btn, .btn.inverse:hover{color:#FFFFFF; background-color:#82B440; border-color:#82B440;}
-.btn:hover, .btn.inverse{color:inherit; background-color:transparent; border-color:inherit;}
+.boton, .boton.inverse:hover{color:#FFFFFF; background-color:#82B440; border-color:#82B440;}
+.boton:hover, .boton.inverse{color:inherit; background-color:transparent; border-color:inherit;}
+
+.botonDelete, .botonDelete.inverse:hover{color:#FFFFFF; background-color:#e83a3a; border-color:#e83a3a;}
+.botonDelete:hover, .botonDelete.inverse{color:inherit; background-color:transparent; border-color:inherit;}
 
 .icon::after{border-color:#D7D7D7;}
 article:hover .icon::after{border-color:#82B440;}
@@ -264,7 +267,7 @@ article:hover .icon::after{border-color:#82B440;}
 /* Rows */
 .row0{color:#888888; background-color:#F6F6F6;}
 .row1{color:#888888; background-color:#FFFFFF;}
-.row2, .row2 a{color:#FFFFFF; background-color:#394251;}
+.row2, .row2 a{color:#FFFFFF; background-color:#82B440;}
 .row3{color:#888888; background-color:#FFFFFF;}
 .row4{color:#D0D0D0; background-color:#252B34;}
 .row5, .row5 a{color:#D0D0D0; background-color:#252B34;}
@@ -275,8 +278,8 @@ article:hover .icon::after{border-color:#82B440;}
 
 
 /* Page Intro */
-#pageintro .btn.inverse{color:#82B440; background-color:#FFFFFF; border-color:#FFFFFF;}
-#pageintro .btn.inverse:hover{color:#FFFFFF; background-color:#82B440; border-color:#82B440;}
+#pageintro .boton.inverse{color:#82B440; background-color:#FFFFFF; border-color:#FFFFFF;}
+#pageintro .boton.inverse:hover{color:#FFFFFF; background-color:#82B440; border-color:#82B440;}
 
 
 /* Content Area */
@@ -299,12 +302,12 @@ article:hover .icon::after{border-color:#82B440;}
 
 
 /* Navigation */
-#mainav ul.clear{border-color:#252B34;}
-#mainav li a{color:inherit; background-color:inherit; border-color:#252B34;}
+/* #mainav ul.clear{border-color:#252B34;}
+#mainav li a{color:inherit;  border-color:#252B34;}
 #mainav .active a, #mainav a:hover, #mainav li:hover > a{color:#ffffff; background-color:inherit;}
 #mainav li li a, #mainav .active li a{color:#FFFFFF; background-color:rgba(0,0,0,.6); border-color:rgba(0,0,0,.6);}
 #mainav li li:hover > a, #mainav .active .active > a{color:#FFFFFF; background-color:#000000;}
-#mainav form select{color:#FFFFFF; background-color:#394251; border-color:#888888;}
+#mainav form select{color:#FFFFFF; background-color:#82B440; border-color:#888888;} */
 
 #breadcrumb{border-color:#D7D7D7;}
 #breadcrumb a{color:inherit; background-color:inherit;}
@@ -320,11 +323,12 @@ article:hover .icon::after{border-color:#82B440;}
 
 
 /* Tables + Comments */
-table, th, td, #comments .avatar, #comments input, #comments textarea{border-color:#D7D7D7;}
+table, th, td, #comments .avatar, #comments input, #comments textarea{border-color:#000000;}
 #comments input:focus, #comments textarea:focus, #comments *:required:focus{border-color:#82B440;}
-th{color:#FFFFFF; background-color:#373737;}
+/* th{color:#FFFFFF;  background-color:#394251;} */
+th{color:#FFFFFF;  background-color:#82B440;}
 tr, #comments li, #comments input[type="submit"], #comments input[type="reset"]{color:inherit; background-color:#FBFBFB;}
-tr:nth-child(even), #comments li:nth-child(even){color:inherit; background-color:#F7F7F7;}
+tr:nth-child(even), #comments li:nth-child(even){color: #000000; background-color:#F7F7F7;}
 table a, #comments a{background-color:inherit;}
 
 

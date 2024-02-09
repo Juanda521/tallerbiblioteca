@@ -9,15 +9,14 @@ public class CatalogoViewModel
 
     public List<Ejemplar> Ejemplares {get; set;}
 
-    public Peticiones Peticiones {get; set;}  = new();
+    public Peticiones Peticiones {get; set;} 
 
-    public List<AutorLibro> Autores  {get; set;} = new();
+    public List<AutorLibro> AutoresRelacionados  {get; set;} = new();
 
-    public List<GeneroLibro> Generos  {get; set;}  = new();
+    public List<GeneroLibro> GenerosRelacionados  {get; set;}  = new();
 
-   
+    public List<Genero> Generos {get; set;}  =  new();
 
-
-
+    public List<Autor> Autores {get; set;} = new();
 
 }

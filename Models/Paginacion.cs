@@ -14,10 +14,11 @@ namespace tallerbiblioteca.Models{
 
         public LibroViewModel? LibroViewModel {get; set;} = new();
 
-        public CatalogoViewModel? CatalogoViewModel {get;set;} = new();
+        public CatalogoViewModel? CatalogoViewModel {get;set;}
+
+        public PeticionesViewModel? PeticionesViewModel { get; set; } = new();
 
         
-
         public Paginacion(List<T> items, int totalItems, int numero_pagina, int itemsPagina)
         {
             Items  = items;

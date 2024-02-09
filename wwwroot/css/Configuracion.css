@@ -2,7 +2,7 @@
     position: relative;
     display: inline-block;
     width: 60px;
-    height: 34px;
+    height: 32px;
 }
 
     .toggle-switch input {
@@ -13,6 +13,8 @@
 
 .slider {
     position: absolute;
+    margin-bottom: 1px;
+    padding-top: 1px;
     top: 0;
     left: 0;
     right: 0;
@@ -25,7 +27,7 @@
     .slider:before {
         position: absolute;
         content: "";
-        height: 26px;
+        height: 22px;
         width: 26px;
         left: 4px;
         bottom: 4px;
@@ -35,7 +37,7 @@
     }
 
 input:checked + .slider {
-    background-color: #34c464;
+    background-color: #82B440;
 }
 
     input:checked + .slider:before {

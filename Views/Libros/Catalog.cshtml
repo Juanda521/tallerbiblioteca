@@ -6,19 +6,7 @@
     ViewData["Title"] = "Catalogo";
 }
 
-@* <div class="row">
-    <div class="col-4">
-        <div class="carrousel-container">
-            <div class="carousel ms-5 me-5">
-                @for(int i = 0;i<=8 && i< Model.Libros.Count;i++){
-                    <div class="carousel__face">
-                        <img src="data:Images;base64,@Model.Libros[i].ImagenLibro" alt="fallo en la imagen" srcset="" width="180" heigh="200">
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-</div> *@
+
 <div class="row">
     <div class="col-6 ps-5 ms-5">
         <h1>Bienvenido a tu biblioteca BOOKWARE</h1>
@@ -27,78 +15,144 @@
         <form> 
             <p>
                 <input type="text" name="busqueda" placeholder="Nombre libro" class="form-control "/>
-                <button class="button mt-2" type="submit" class="ms-4 mt-1" value="Buscar">Buscar</button>
+                <button class="boton medium mt-2" type="submit"  value="Buscar">Buscar</button>
             </p>
         </form>
     </div>
 </div>
 
- 
 <div class="row">
+    <div class="col-2 ">
+        <h1>Cuentanos!! que quieres leer hoy?</h1>
+        <form asp-action="Catalog" method="post">
+            @foreach(var genero in Model.CatalogoViewModel.Generos){
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="@($"check{genero.Id}")" name="generosSeleccionados" value="@genero.Id">
+                    <label class="form-check-label" for="@($"check{genero.Id}")">
+                        @genero.NombreGenero
+                    </label>
+                </div>
+            }
+            <button type="submit" class="boton medium mt-2">Buscar</button>
+        </form>
+        
+        <h1 class="mt-4">Algun Autor que quieras conocer?</h1>
+        <form action="Catalog" method="post">
+            @foreach(var autor in Model.CatalogoViewModel.Autores){
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="@($"check{autor.Id}")" name="AutoresSeleccionados" value="@autor.Id">
+                    <label class="form-check-label" for="@($"check{autor.Id}")">
+                        @autor.NombreAutor
+                    </label>
+                </div>
+            }
+            <button type="submit" class="boton medium mt-2">Buscar</button>
+        </form>
+       
+
+    </div>
+    <div  class="col-9">
+
+
+
+ 
+<div class="row mt-2">
     @foreach(var Libro in Model.Items){
        
         <div class="col-lg-2 col-md-3 col-sm-4 col-6">
             <div class="card mb-2" style="width: 100%;">
-                <img src="data:Images;base64,@Libro.ImagenLibro" class="img-fluid" alt="fallo en la imagen" class="card-img-top img-fluid">
+                <img src="data:Images;base64,@Libro.ImagenLibro" style="max-height: 200px; object-fit: cover;" alt="fallo en la imagen" >
                 @* <img src="data:Images;base64,@Libro.ImagenLibro" class="card-img-top" alt="aun no hay imagen "> *@
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">@Libro.Nombre</h5>
-                    <h5 class="card-title">@Libro.CantidadLibros</h5>
+                <div class="card-body">
                    
-                    
-                   <!-- Button trigger modal -->
-                    <button class="button" type="button" class="libros-relacionados-button" data-id="@Libro.Id"  data-bs-toggle="modal" data-bs-target="#info_@Libro.Id">
-                        ver informacion
-                    </button>
+                    <h5 class="card-title libro-nombre">@Libro.Nombre</h5>
+                    <div class="row d-flex"> 
+                        <div class="col-11">
+                            <p  class="mt-1 fs-5 text-dark">ver  informacion</p>
+                        </div>
+                        <div class="col-2">
+                            <button  class="libros-relacionados-button" data-id="@Libro.Id"  data-bs-toggle="modal" data-bs-target="#info_@Libro.Id">
+                            <i class=" ms-1 fa-solid fa-eye fa-2xl" style="color: #000000;"></i>
+                        </button>
+                        </div>
+                    </div>
+                   @* <div class="d-flex align-items-center">
+                        <p  class="mt-1 fs-5 text-dark">ver  informacion</p>
+                         <!-- Button trigger modal -->
+                        <button  class="libros-relacionados-button" data-id="@Libro.Id"  data-bs-toggle="modal" data-bs-target="#info_@Libro.Id">
+                            <i class=" ms-1 fa-solid fa-eye fa-2xl" style="color: #000000;"></i>
+                        </button>
+                   </div> *@
                     <!-- Modal -->
                     <div class="modal fade" id="info_@Libro.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">@Libro.Nombre</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="boton-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                    <div class="row">
                                         <div class="col-3">
-                                            <img class="m-4" src="data:Images;base64,@Libro.ImagenLibro" alt="fallo en la imagen" srcset="">
+                                            <img class="m-4" style="max-height: 200px;" src="data:Images;base64,@Libro.ImagenLibro" alt="fallo en la imagen" srcset="">
                                         </div> 
                                         <div class="col-6">
                                             <h4>@Libro.Nombre</h4>
-                                            @foreach(var autor in Model.CatalogoViewModel.Autores){
+                                            @foreach(var autor in Model.CatalogoViewModel.AutoresRelacionados){
                                                 if(autor.Id_libro == Libro.Id){
-                                                    <p class="text-bold">@autor.Autor.NombreAutor</p>
+                                                    
+                                                    <span class="text-dark fw-bold fs-4"> Autor: </span> <span class="text-bold fs-5"> @autor.Autor.NombreAutor</span>
+                                                
                                                 }
                                             }
-
-                                            @foreach(var genero in Model.CatalogoViewModel.Generos){
+                                            <br>
+                                            <span class="fs-3 fw-bold text-dark">Generos</span>
+                                            @foreach(var genero in Model.CatalogoViewModel.GenerosRelacionados){
                                                 if(genero.Id_libro == Libro.Id){
+                                                    
                                                     <p class="text-bold etiqueta">@genero.Genero.NombreGenero</p>
                                                 }
                                             }
+                                            @{
+                                                int cantidadEjemplaresDisponibles =  Model.CatalogoViewModel.Ejemplares.Count(Ejemplar=>Ejemplar.EstadoEjemplar == "DISPONIBLE");
+                                            }
                                           
-                                            <form asp-controller="Peticiones" asp-action="Create">
-                                                @foreach(var ejemplar in Model.CatalogoViewModel.Ejemplares){
-                                                    if(ejemplar.Id_libro == Libro.Id && ejemplar.EstadoEjemplar == "DISPONIBLE"){
-                                                        <input type="hidden" asp-for="@Model.CatalogoViewModel.Peticiones.Id_ejemplar" value="@ejemplar.Id">
-                                                        <input type="hidden" asp-for="@Model.CatalogoViewModel.Peticiones.Motivo" value="Prestamo Libro">
-                                                    }else{
-                                                        <input type="hidden" asp-for="@Model.CatalogoViewModel.Peticiones.Motivo" value="Reserva Libro">
-                                                    }
-                                                }
-                                                <input type="hidden" asp-for="@Model.CatalogoViewModel.Peticiones.Id_usuario" value = "@User.FindFirstValue(ClaimTypes.NameIdentifier)" >
-                                                <button type="button"  data-bs-dismiss="modal">Reservar</button>
-                                                <button type="submit">Prestar</button>
-                                            </form>
-                                          
+                                           <form asp-controller="Peticiones" asp-action="Registrar" method="post">
+    @if (Model.CatalogoViewModel.Ejemplares.Any(ejemplar => ejemplar.Id_libro == Libro.Id && ejemplar.EstadoEjemplar == "DISPONIBLE"))
+    {
+        var primerEjemplarDisponible = Model.CatalogoViewModel.Ejemplares.First(ejemplar => ejemplar.Id_libro == Libro.Id && ejemplar.EstadoEjemplar == "DISPONIBLE");
+
+        <input type="hidden" name="Id_ejemplar" value="@primerEjemplarDisponible.Id">
+        <input type="hidden" name="motivo" value="Prestamo Libro">
+        <input type="hidden" name="Id_usuario" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)">
+        <button type="submit" class="boton medium">Prestar</button>
+    }
+    else
+    {
+        <button type="button" class="boton medium" data-bs-dismiss="modal">Reservar</button>
+    }
+</form>
                                         </div>
-                                        <div class="col-3 relaciones-@Libro.Id">
-                                            <h4>tambien te puede gustar:</h4>
+                                      
+                                        <div class="col-3">
+                                            <div class="row">
+                                                <h4>tambien te puede gustar:</h4>
+                                            </div>
+                                            <div class="relaciones-@Libro.Id">
+
+                                            </div>
+                                            
                                            
                                            
                                         </div>
-                                        <p class="card-text">@Libro.Descripcion</p>
+                                      
                                    </div> 
+                                   <div class="row">
+                                    <div class="col-8">
+                                          <span class="fs-5">@Libro.Descripcion</span>
+                                    </div>
+                                   </div>
                                   
                                 </div>
                             </div>
@@ -109,34 +163,29 @@
         </div>
     }
 </div>
-                <nav aria-label="Page navigation" class="pagination mb-3">
-                    <ul >
-                        <li class="page-item @(Model.Numero_pagina == 1 ? "disabled" : "")">
-                            <a class="page-link text-dark" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
-                        </li>
-                        @if (Model.Numero_pagina > 1)
-                        {
-                            <li class="page-item">
-                                <a class="page-link text-dark" href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]">Anterior</a>
-                            </li>
-                        }
-                        @for (var i = 1; i <= Model.TotalItems; i++)
-                        {
-                            <li class="page-item  @(Model.Numero_pagina == i ? "active" : "") ">
-                                <a class=" page-link bg-success text-dark" href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
-                            </li>
-                        }
-                        @if (Model.Numero_pagina < Model.TotalItems)
-                        {
-                            <li class="page-item">
-                                <a class="page-link text-dark" href="?pagina=@(Model.Numero_pagina + 1)&busqueda=@Context.Request.Query["busqueda"]">Siguiente</a>
-                            </li>
-                        }
-                        <li class="page-item @(Model.Numero_pagina == Model.TotalItems ? "disabled" : "")">
-                            <a class="page-link text-dark" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">Última</a>
-                        </li>
-                    </ul>
-                </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="pagination p1">
+        <ul>
+                <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+            <a href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]"><li><<</li></a>
+            @for (var i = 1; i <= Model.TotalItems; i++)
+            {
+                
+                <a class=" me-1 @(Model.Numero_pagina == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+                
+            }
+                @if (Model.Numero_pagina < Model.TotalItems)
+            {
+                
+                    <a href="?pagina=@(Model.Numero_pagina + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
+                
+            }
+            <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]"><li>Fin</li></a>
+        </ul>
+    </div>
+</div>
 <div class="wrapper row5">
   <div id="copyright" class="hoc clear"> 
    
@@ -148,44 +197,7 @@
 
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        // Escucha el evento click en los botones con la clase 'libros-relacionados-button'
-        $('.libros-relacionados-button').click(function () {
-            // Obtén el ID del libro desde el atributo 'data-id'
-            var idLibro = $(this).data('id');
-            console.log(idLibro)
-            // Llama a la función para obtener libros relacionados
-            obtenerLibrosRelacionados(idLibro);
-        });
 
-        // Función para obtener y mostrar los libros relacionados en el modal
-        function obtenerLibrosRelacionados(idLibro) {
-            console.log(idLibro)
-            $.ajax({
-                url: '@Url.Action("LibrosRelacionadosPorGenero", "Libros")',
-                type: 'GET',
-                data: { idLibro: idLibro },
-                success: function (data) {
-                    var librosRelacionadosContent = $('.relaciones-' + idLibro);
-                    librosRelacionadosContent.empty();
-                   @* librosRelacionadosContent.append('<h3>' tambien te pueden gustar'</h3>'); *@
-                    for (var i = 0; i < data.length; i++) {
-                        var libro = data[i];
-                        librosRelacionadosContent.append('<p>' + libro.nombre + '</p>');
-                    }
-                     
-
-                    console.log(data)
-                },
-                error: function () {
-                    console.log('Hubo un error al obtener los libros relacionados.');
-                }
-            });
-        }
-    });
-</script>
 @section Scripts{
     @{
         var Mensaje =  TempData["Mensaje"] as string;

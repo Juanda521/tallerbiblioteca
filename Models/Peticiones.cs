@@ -23,6 +23,11 @@ namespace tallerbiblioteca.Models
 
         public string Estado  {get; set;} = "EN ESPERA";
 
+          [NotMapped]
+ 
+        public string NombreUsuario => Usuario.Name;
+        public string apellido => Usuario.Apellido;
+        public string NombreLibro => Ejemplar.Libro.Nombre;
         public string IdEjemplarAsString{ 
             get { return Id_ejemplar.ToString(); }
         }

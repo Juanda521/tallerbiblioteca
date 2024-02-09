@@ -1,0 +1,22 @@
+@model tallerbiblioteca.Models.Usuario;
+@{
+    ViewData["Title"] = "Confirmar codigo";
+}
+<h2>Codigo confirmación</h2>
+<div>
+    <form asp-action="ConfirmarCodigo">
+        <div class="col-md-4">
+            <label for="correo">Codigo Confirmación</label>
+            <input type="number" class="form-control" id="codigo" name="codigo" placeholder="Ingresa codigo confirmación(5 digitos)"required>
+             @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+            {
+                <p class="text-danger">@ViewData["ErrorMessage"]</p>
+            }
+        </div>
+        <br>
+        <div class="col-md-10">
+            <button type="submit" class="boton boton-primary">Enviar</button>
+        </div>
+    </form>
+    <button class="mt-4 boton boton-secondary "><a asp-action="Recuperar">regresar</a></button>
+</div>

@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.IO;
+using OfficeOpenXml;
+using Microsoft.AspNetCore.Http;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,11 +23,131 @@ namespace tallerbiblioteca.Controllers
             _configServices =  configuracionServices;    
         }
 
+        [HttpPost]
+        public ActionResult SubirArchivo(IFormFile archivoCSV)
+        {
+            Console.WriteLine("llegamos a la funcion ");
+            if (archivoCSV != null && archivoCSV.Length > 0)
+            {
+                Console.WriteLine("tenemos el archivo csv");
+                using (var memoryStream = new MemoryStream())
+                {
+                    archivoCSV.CopyTo(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin); // Reiniciar el puntero del flujo de memoria
+
+                    using (var reader = new StreamReader(memoryStream))
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            var values = line.Split(';'); // Puedes ajustar el separador según el formato del CSV
+
+                            if (values.Length >= 3) // Asegúrate de tener al menos 3 valores por fila (Documento, Nombre, Apellido)
+                            {
+                                long documento;
+                                if (long.TryParse(values[0], out documento))
+                                {
+                                    Console.WriteLine("vamos a crear el estudiante matriculado");
+                                    var matriculado = new Matriculados
+                                    {
+                                        Documento = documento,
+                                        Nombre = values[1],
+                                        Apellido = values[2]
+                                    };
+                                    Console.WriteLine($"se supone que creamos un matriculado con el sguiente numero de documento: {matriculado.Documento} ");
+
+                                    _configServices.RegistrarExcel(matriculado);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No se pudo convertir el documento a long");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Formato incorrecto de fila en el archivo CSV");
+                            }
+                        }
+                    }
+                }
+
+                _configServices.guardarUsuariosFromExcel();
+                Console.WriteLine("Datos insertados en la base de datos correctamente.");
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                  Console.WriteLine("no tenemos el csv");
+                ViewBag.MensajeError = "Por favor, seleccione un archivo CSV.";
+                return RedirectToAction("Index");
+            }
+        }
+
+
+        [HttpPost]
+        public ActionResult SubirArchivoExcel(IFormFile archivoExcel)
+        {
+            if (archivoExcel != null && archivoExcel.Length > 0)
+            {
+                // Realizar la lógica para leer y procesar el archivo Excel
+                // Puedes utilizar el código que proporcioné anteriormente
+                using (var memoryStream = new MemoryStream())
+                {
+                    archivoExcel.CopyTo(memoryStream);
+                
+                    using (var package = new ExcelPackage(memoryStream))
+                    {
+                        var worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+                        if (rowCount>1){
+                            Console.WriteLine("se encontraron datos en el archivo excel.");
+                            for (int row = 2; row <= rowCount; row++)
+                            {
+                                Console.WriteLine("A la de dios cuantos de estos nos salgan");
+                                long documento;
+                                if (long.TryParse(worksheet.Cells[row, 1].Value.ToString(), out documento))
+                                {
+                                    var matriculado = new Matriculados
+                                    {
+                                        Documento = documento,
+                                        Nombre = worksheet.Cells[row, 2].Value.ToString(),
+                                        Apellido = worksheet.Cells[row, 3].Value.ToString(),
+                                    };
+
+                                    _configServices.RegistrarExcel(matriculado);
+                                }else{
+                                    Console.WriteLine("no parsea el numero en long");
+                                }
+                            }
+                             _configServices.guardarUsuariosFromExcel();
+                            Console.WriteLine("Datos insertados en la base de datos correctamente.");
+                        }else{
+                            Console.WriteLine("no se encontraron registros en el archivo excel");
+                        }
+                    
+                    }
+                }
+
+                return RedirectToAction("Index"); // Redirige a la página principal después de procesar el archivo
+            }
+            else
+            {
+                Console.WriteLine("no estamos subiendo archivo");
+                // Manejar el caso en el que no se seleccionó un archivo
+                ViewBag.MensajeError = "Por favor, seleccione un archivo Excel.";
+                return RedirectToAction("Index"); // Redirige a la página principal después de procesar el archivo
+            }
+        }
+
         public async Task<IActionResult> UsuariosInactivos()
         {
             try
-            {            
-                return View(await _configServices.UsuariosInactivos());
+            {       
+
+                var usuarios =  await _configServices.UsuariosInactivos()  ;
+                 ViewBag.UsuariosInactivos  = usuarios.Count;
+                return View(usuarios);
             }
             catch (Exception ex)
             {
@@ -92,6 +215,7 @@ namespace tallerbiblioteca.Controllers
         {
             try
             {
+                Console.WriteLine($"este es el id que esta llegando del formulario {id}");
                 await _configServices.Edit(id);
                  MensajeRespuestaValidacionPermiso(_configServices.MensajeRespuestaValidacionPermiso(200));
                 return RedirectToAction(nameof(Index));

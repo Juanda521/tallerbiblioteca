@@ -5,7 +5,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Detalles</h1>
 
 <div>
     <h4>Rol</h4>
@@ -28,18 +28,24 @@
 <div>
     <ul>
         @if (Model.Configuraciones.Count > 0) {
-
+            <h6>Permisos</h6>
             @foreach (var configuracion in Model.Configuraciones)
             {
             <li>
                 
                 @if (configuracion.Permiso != null)
                 {
-                    <span>Permiso: @configuracion.Permiso.Nombre, Estado: @configuracion.Estado</span>
+                    //esto nos permitira cambiar el color de la letra dependiendo del estado del permiso
+                     <span>
+                        @configuracion.Permiso.Nombre, Estado: 
+                        <span style="color: @(configuracion.Estado == "INACTIVO" ? "red" : "green")">
+                            @configuracion.Estado
+                        </span>
+                    </span>
                 }
                 else
                 {
-                    <span>Permiso no disponible, Estado: @configuracion.Estado</span>
+                    <span>Permiso no disponible, Estado: @{if(@configuracion.Estado =="ACTIVO"){<span class="text-error"> @configuracion.Estado</span>}} @configuracion.Estado</span>
                 }
             </li>
         }
@@ -51,6 +57,6 @@
     </ul>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Rol.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Editar" class="boton medium" asp-route-id="@Model?.Rol.Id">Edit</a> 
+    <a asp-action="Index" class="botonDelete Deletemedium">Regresar</a>
 </div>

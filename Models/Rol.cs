@@ -1,9 +1,16 @@
-﻿namespace tallerbiblioteca.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+
+namespace tallerbiblioteca.Models
 {
     public class Rol
     {
         public int Id { get; set; } 
-        public string Nombre { get; set; } 
-        public string Estado { get; set; }  
+        [Required(ErrorMessage = "este campo es obligatorio.")]
+        public string Nombre { get; set; } = "";
+        [Required(ErrorMessage = "este campo es obligatorio.")]
+        public string Estado { get; set; }  = "";
     }
 }

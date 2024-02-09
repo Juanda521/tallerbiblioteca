@@ -26,6 +26,12 @@ public class BibliotecaDbContext : DbContext
     public DbSet<GeneroLibro> GenerosLibros {get; set;}
     public DbSet<AutorLibro> AutoresLibros {get; set;}
 
+    public DbSet<Publicaciones> Publicaciones {get; set;}
+    public DbSet<Devolucion> Devoluciones {get; set;}
+    public DbSet<Sancion> Sanciones {get; set;}
+    public DbSet<Matriculados>Matriculados {get; set;}
+
+
 
 
 
@@ -33,7 +39,9 @@ public class BibliotecaDbContext : DbContext
     // Puedes anular el método OnModelCreating para configurar relaciones y restricciones
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-         
+        modelBuilder.Entity<Usuario>()
+              .Property(u => u.Numero_documento)
+              .HasColumnType("bigint");
         // Configuraciones de entidades y relaciones
         base.OnModelCreating(modelBuilder);
     }

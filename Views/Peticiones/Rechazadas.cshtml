@@ -1,0 +1,123 @@
+﻿@model Paginacion<Peticiones>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <p>
+            <a class="boton medium" asp-action="Create">Registrar </a>
+            <a class="boton medium" asp-action="Index">Volver</a>
+        </p>
+    </div>
+
+    <div class="col-4">
+        <form asp-action="Index">
+            <p>
+                <input type="text" name="busqueda" placeholder="identificacion usuario" class="form-control" />
+                <button type="submit" class="ms-4 mt-1 boton medium  " value="Buscar">Buscar</button>
+            </p>
+        </form>
+    </div>
+    <div class="col-md-4 pt-2">
+        <h1 class="fw-bold text-center pt-4">Peticiones</h1>
+    </div>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th> Id </th>
+            <th> Id ejemplar</th>
+            <th> Nombre Libro</th>
+            <th> Nombre </th>
+            @*<th> Apellido </th>*@
+            <th> FechaPeticion </th>
+            <th> Motivo </th>
+            <th> Estado </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id_ejemplar)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ejemplar.Libro.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreUsuario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaPeticion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Motivo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                </td>
+                <td>
+                    @* <form asp-controller="Prestamos" asp-action="Create" method="post" >
+                <input asp-for="@Model.PeticionesViewModel.Prestamo.Id_peticion" value="@item.Id"  type="hidden">
+                <button type="submit">aceptar</button>
+                </form>  *@
+                    <button class="d-inline"><a asp-controller="Prestamos" asp-action="Created" asp-route-id="@item.Id"><i class="fa-solid fa-circle-check fa-2xl" style="color: #83B440;"></i></a></button>
+                    <button class="d-inline ms-2"><a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark fa-2xl" style="color: #fa0000;"></i></a></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="text-center ms-5 ps-5">
+    <div class="pagination p1">
+        <ul>
+            <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+            <a href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]">
+            <li><<</li></a>
+            @for (var i = 1; i <= Model.TotalItems; i++)
+            {
+
+                <a class=" me-1 @(Model.Numero_pagina == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+
+            }
+            @if (Model.Numero_pagina < Model.TotalItems)
+            {
+
+                <a href="?pagina=@(Model.Numero_pagina + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
+
+            }
+            <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">
+            <li>Fin</li></a>
+        </ul>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @{
+        var Mensaje = TempData["Mensaje"] as string;
+
+        if (Mensaje != null)
+        {
+            var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+            <script>
+                console.log("se va mostrar");
+
+                const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+                const icono = "@mensaje.Icono";
+                MostrarMensajeUsuarios(icono, cuerpo);
+            </script>
+
+        }
+
+    }
+}

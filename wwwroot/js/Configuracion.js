@@ -1,6 +1,23 @@
-﻿function prueba() {
-    console.log("estamos en la consola desde configuracion js");
+﻿
+console.log("estamos en configuracion.js");
+function MensajeBackup(descargaFinalizada){
+    if (descargaFinalizada != null && descargaFinalizada.toLowerCase() === "true") {
+        Console.WriteLine("llego el viewdata");
+        alert("¡Descarga finalizada!");
+    }else{
+        Console.log("no esta llegando el viewdata");
+    }
 }
+
+$(document).ready(function() {
+    $('.chkCambiarPermiso').change(function() {
+        var configId = $(this).data('config-id');
+        $('#configId').val(configId);
+        console.log("ID de la configuracion: " + configId);
+        // $('#formCambiarCampoPermiso').submit();
+        console.log("le dimos click al boton y enviamos el formulario");
+    });
+});
 
 function sendForm(e) {
     e.preventDefault();
@@ -16,6 +33,23 @@ function sendForm(e) {
         }
     })
 }
+
+function sendFormDelete(e,idConfig) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Seguro que deseas eliminar esta configuracion?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'SI'
+    }).then((resultado) => {
+        if (resultado.isConfirmed) {
+            const formulario = document.getElementById("form_"+idConfig)
+            console.log(formulario)
+            formulario.submit();
+        }
+    })
+}
+
 
 
 

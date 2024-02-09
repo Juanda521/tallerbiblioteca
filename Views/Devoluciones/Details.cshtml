@@ -1,0 +1,37 @@
+﻿@model tallerbiblioteca.Models.Devolucion
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Devolucion</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Prestamo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Prestamo.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Observaciones)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Observaciones)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Fecha_devolucion)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Fecha_devolucion)
+        </dd>
+    </dl>
+</div>
+<div>
+    <button class="boton medium" type="submit"><a asp-action="Edit">Editar</a></button>
+    <button class="mt-2 botonDelete Deletemedium"> <a asp-action="Index">Regresar</a></button>
+    
+</div>

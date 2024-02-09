@@ -1,32 +1,46 @@
-﻿@model IEnumerable<tallerbiblioteca.Models.Rol>
+﻿@* @model IEnumerable<tallerbiblioteca.Models.Rol> *@
+    @model Paginacion<Rol>
 
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Roles";
 }
 
-<h1>Index</h1>
+<h1>Roles</h1>
+<div class="row">
+    <div class="col-4">
+        <p>
+            <a asp-action="Create" class="boton medium">Crear Rol</a>
+        </p>
+    </div>
+     <div class="col-4 ">
+        <form asp-action="Index"> 
+            <p>
+                <input type="text" name="busqueda" placeholder="Nombre Rol | Estado" class="form-control"/>
+                <button type="submit" class="ms-4 mt-1 boton  " value="Buscar">Buscar</button>
+            </p>
+        </form>
+    </div>
+  
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<table>
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+              Id
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nombre)
+                Nombre
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Estado)
+                Estado
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Items) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
@@ -37,12 +51,59 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Estado)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            <td >
+                 
+        
+                <a asp-action="Edit" asp-route-id="@item.Id" class="boton medium ms-2 me-2">Editar</a> 
+                <a asp-action="Details" asp-route-id="@item.Id" class="boton medium">Detalles</a> 
+
+                @* <!-- Debido a que los roles no se podran eliminar, este boton no se mostrara al usuario--> *@
+                @* <a asp-action="Delete" asp-route-id="@item.Id" class="boton medium">Eliminar</a> *@
             </td>
         </tr>
 }
     </tbody>
 </table>
+<div class="row">
+               <div class="pagination p1">
+                    <ul>
+                         <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+                        <a href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]"><li><<</li></a>
+                        @for (var i = 1; i <= Model.TotalItems; i++)
+                        {
+                            
+                            <a class=" me-1 @(Model.Numero_pagina == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+                            
+                        }
+                         @if (Model.Numero_pagina < Model.TotalItems)
+                        {
+                           
+                                <a href="?pagina=@(Model.Numero_pagina + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
+                           
+                        }
+                        <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]"><li>Fin</li></a>
+                    </ul>
+                </div>
+            </div>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+ @{
+        var Mensaje =  TempData["Mensaje"] as string;
+ 
+        if (Mensaje!=null){
+            var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+        <script>
+             console.log("se va mostrar");
+             
+            const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+            const icono = "@mensaje.Icono";
+            MostrarMensajeUsuarios(icono, cuerpo);
+        </script>
+          
+        }
+      
+    }
+}

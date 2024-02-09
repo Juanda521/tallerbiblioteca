@@ -13,12 +13,10 @@ namespace tallerbiblioteca.Models
        [ForeignKey("Id_peticion")]
         public Peticiones Peticion { get; set; } = new();
 
-        [DataType(DataType.Date)]
         // [Required(ErrorMessage = "La fecha de inicio es requerida.")]
         public DateTime Fecha_inicio{ get; set; }
 
-        [DataType(DataType.Date)]
-        public DateTime? Fecha_fin { get; set; }
+        public DateTime Fecha_fin { get; set; }
 
         public string Estado {get; set;} = "En curso";
     }

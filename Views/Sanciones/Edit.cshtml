@@ -1,0 +1,60 @@
+﻿@model tallerbiblioteca.Models.Sancion
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Sancion</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" id="formulario" onsubmit="sendForm(event)">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Id_devolucion" class="control-label"></label>
+                <select asp-for="Id_devolucion" class="form-control" asp-items="ViewBag.Id_devolucion"></select>
+                <span asp-validation-for="Id_devolucion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Motivo_sancion" class="control-label"></label>
+                <input asp-for="Motivo_sancion" class="form-control" />
+                <span asp-validation-for="Motivo_sancion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fecha_Sancion" class="control-label"></label>
+                <input asp-for="Fecha_Sancion" class="form-control" />
+                <span asp-validation-for="Fecha_Sancion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="boton boton-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function sendForm(e){
+            e.preventDefault();
+            Swal.fire({
+                title: 'Quieres guardar los cambios?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'SI'
+            }).then((resultado)=>{
+                if (resultado.isConfirmed){
+                    const formulario = document.getElementById("formulario")
+                    formulario.submit();
+                }
+            })
+        }
+    </script>
+}
