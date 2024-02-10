@@ -35,7 +35,11 @@
     }
 
 input:checked + .slider {
+<<<<<<< Updated upstream
     background-color: #34c464;
+=======
+    background-color: #1e6042;
+>>>>>>> Stashed changes
 }
 
     input:checked + .slider:before {

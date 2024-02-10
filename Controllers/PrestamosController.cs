@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using tallerbiblioteca.Context;
 using tallerbiblioteca.Models;
@@ -27,7 +22,37 @@ namespace tallerbiblioteca.Controllers
         public async Task<IActionResult> Index()
         {
 
+<<<<<<< Updated upstream
             return View(await _prestamosServices.ObtenerPrestamos());
+=======
+            var rolUsuario = User.FindFirst(ClaimTypes.Role)?.Value;
+            Console.WriteLine($"el rol del usuario en linea es: {rolUsuario}");
+
+            var idUsuarioOnline  = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            Console.WriteLine($"el documento del usuario en linea es: {idUsuarioOnline}");
+
+            if (rolUsuario!="1" && rolUsuario!="3"){
+                Console.WriteLine("hay en linea un usuario");
+                prestamos =  prestamos.Where(p=>p.Peticion.Usuario.Id.ToString()==idUsuarioOnline).ToList();
+            }else{
+                Console.WriteLine("hay en linea un administrador o un alfabetizador");
+            }
+
+            if (busqueda!=null || fechaInicio!=null || fechaFin !=null){
+                Console.WriteLine("vamos a buscar");
+                prestamos =  _prestamosServices.BuscarPrestamos(busqueda,fechaInicio,fechaFin);
+            }
+
+            var PrestamosPaginados = prestamos.OrderBy(p => p.Estado == "En curso" ? 0 : 1).Skip((Numero_pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
+            
+            
+            int total_prestamos  = prestamos.Count; 
+            int total = (total_prestamos / itemsPagina)+1;
+
+            Paginacion<Prestamo> paginacion  =new Paginacion<Prestamo>(PrestamosPaginados,total,Numero_pagina,itemsPagina);
+
+            return View(paginacion);
+>>>>>>> Stashed changes
         }
         
         public  IActionResult Calendario()

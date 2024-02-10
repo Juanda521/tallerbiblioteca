@@ -2,6 +2,19 @@
     console.log("estamos en la consola desde configuracion js");
 }
 
+<<<<<<< Updated upstream
+=======
+$(document).ready(function() {
+    $('.chkCambiarPermiso').change(function() {
+        var configId = $(this).data('config-id');
+        $('#configId').val(configId);
+        console.log("ID de la configuracion: " + configId);
+        $('#formCambiarCampoPermiso').submit();
+        console.log("le dimos click al boton y enviamos el formulario");
+    });
+});
+
+>>>>>>> Stashed changes
 function sendForm(e) {
     e.preventDefault();
     Swal.fire({

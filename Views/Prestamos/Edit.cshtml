@@ -46,4 +46,95 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<<<<<<< Updated upstream
 } *@
+=======
+  
+}
+
+  <script> 
+      
+
+  console.log("estamos en editar libro");
+  document.addEventListener('DOMContentLoaded', function () {
+        var form = document.querySelector('form');
+       
+
+        var fechaString =  '@Model.Fecha_fin';
+        console.log(fechaString);
+       
+        var partesFecha = fechaString.split(' ');
+        var partesFechaNumerica = partesFecha[0].split('/');
+        var partesHora = partesFecha[1].split(':');
+
+        // Obtener los componentes de la fecha y hora
+        var dia = parseInt(partesFechaNumerica[0], 10);
+        var mes = parseInt(partesFechaNumerica[1], 10) - 1; // Restar 1 al mes ya que JavaScript cuenta los meses desde 0
+        var año = parseInt(partesFechaNumerica[2], 10);
+        var hora = parseInt(partesHora[0], 10);
+        var minuto = parseInt(partesHora[1], 10);
+        var segundo = parseInt(partesHora[2], 10);
+
+        // Verificar si es a.m. o p.m. y ajustar la hora en consecuencia
+        if (partesFecha[2].toLowerCase() === 'p.m.' && hora < 12) {
+            hora += 12;
+        }
+
+        // Crear el objeto Date
+        var fechaFinActual = new Date(año, mes, dia, hora, minuto, segundo);
+
+
+       
+        form.addEventListener('submit', function (event) {
+            console.log("escuchamos el envio del formulario ")
+            var fechaSeleccionada = new Date(document.getElementById('fecha_fin').value);
+            console.log("esta es la fecha seleccionada", fechaSeleccionada);
+            console.log("esta es la fecha fin actual: ",fechaFinActual);
+
+            if (fechaSeleccionada < fechaFinActual){
+                 console.log("la fecha seleccionada no puede ser menos a la fecha fin actual del prestamo");
+
+                  event.preventDefault(); // Evita que el formulario se envíe
+                Swal.fire({
+                    position: "top-right",
+                    toast : true,
+                    icon: "error",
+                    text: "La fecha fin seleccionada no puede ser anterior de la fecha fin actual.",
+                }).then((result) => {
+                    // Este código se ejecutará después de que el usuario cierre la alerta
+                    if (result.isConfirmed) {
+                        // Redirigir a la misma página y recargar
+                        window.location.reload();
+                    }
+                });
+
+               
+            }
+            
+            var diasDiferencia = Math.ceil((fechaSeleccionada - fechaFinActual) / (1000 *  60 *  60 *  24));
+            console.log(diasDiferencia);
+            if (diasDiferencia >  15) {
+                console.log("la fecha seleccionada excede la capacida de renovacion del prestamo");
+
+                Swal.fire({
+                    position: "top-right",
+                    toast : true,
+                    icon: "error",
+                    text: "La fecha fin seleccionada no puede ser más de  15 días después de la fecha fin actual.",
+                }).then((result) => {
+                    // Este código se ejecutará después de que el usuario cierre la alerta
+                    if (result.isConfirmed) {
+                        // Redirigir a la misma página y recargar
+                        window.location.reload();
+                    }
+                });
+
+                event.preventDefault(); // Evita que el formulario se envíe
+               
+                
+
+            }
+        });
+    });
+    </script>
+>>>>>>> Stashed changes

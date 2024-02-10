@@ -42,6 +42,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,300&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="wrapper row0">
+  <div id="topbar" class="hoc clear"> 
+    <!-- ################################################################################################ -->
+    <div class="fl_left">
+      <ul class="nospace inline pushright">
+        <!--correo y numero de la institucion-->
+      </ul>
+    </div>
+    <div class="fl_right">
+      <ul class="faico clear">
+        <li><a class="faicon-facebook" href="https://twitter.com/iesla_med"><i class="fa fa-facebook"></i></a></li>
+        <li><a class="faicon-pinterest" href="#"><i class="fa fa-pinterest"></i></a></li>
+        <li><a class="faicon-twitter" href="https://twitter.com/iesla_med"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="faicon-dribble" href="#"><i class="fa fa-dribbble"></i></a></li>
+        <li><a class="faicon-youtube" href="#"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="faicon-google-plus" href="#"><i class="fa fa-google-plus"></i></a></li>
+        <li><a class="faicon-rss" href="#"><i class="fa fa-rss"></i></a></li>
+      </ul>
+    </div>
+    <!-- ################################################################################################ -->
+  </div>
+</div>
 <div class="wrapper row1">
   <header id="header" class="hoc clear"> 
     <!-- ################################################################################################ -->
@@ -78,7 +100,11 @@
             </div>
             <div class="col-2 pt-3">
                 <a  data-bs-toggle="dropdown" aria-expanded="false">
+<<<<<<< Updated upstream
                     <i class="fa-solid fa-bars fa-2xl"  style="color: #269c2e;">  </i>
+=======
+                    <i class="fa-solid fa-bars fa-2xl"  style="color: #08a35d;">  </i>
+>>>>>>> Stashed changes
                 </a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item">Perfil</a></li>
@@ -97,9 +123,11 @@
         </div>
     </div>
     <!-- ################################################################################################ -->
-  </header>
+  
 </div>
+  <div class="container__menu">
 
+<<<<<<< Updated upstream
 
 @* <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">Mi Sitio</a>
@@ -280,8 +308,43 @@
                     }
                 </div>
                 
+=======
+            <div class="menu">
+                <input type="checkbox" id="check__menu">
+                <label for="check__menu" id="label__check">
+                    <i class="fas fa-bars icon__menu"></i>
+                </label>
+                <nav>
+                    <ul>
+                        <li>  <a id="selected" asp-area="" asp-controller="Prestamos" asp-action="Calendario"> </a></li>
+                        <li><a  asp-controller="Libros" asp-action="Catalog">Catalogo</a></li>
+                        <li><a  asp-controller="Publicaciones" asp-action="Index">Publicaciones</a></li>
+                        @if ((User.FindFirst(ClaimTypes.Role)?.Value == "1") || (User.FindFirst(ClaimTypes.Role)?.Value == "3"))
+                        {
+                            <li><a asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a></li>
+                            <li><a asp-area="" asp-controller="Libros" asp-action="Index">Libros</a>
+                                <ul>
+                                    <li><a asp-area="" asp-controller="Ejemplar" asp-action="Index" >Ejemplares</a></li>
+                                    <li><a asp-area="" asp-controller="Autor" asp-action="Index" >Autores</a></li>
+                                    <li><a asp-area="" asp-controller="Generos" asp-action="Index" >Generos</a></li>
+                                    @* <li><a href="#">Servidores</a></li>
+                                    <li><a href="#">Analista</a></li> *@
+                                </ul>
+                            </li>
+                        }
+                        <li><a asp-area="" asp-controller="Peticiones" asp-action="Index">Peticiones</a></li>
+                        <li><a asp-area="" asp-controller="Prestamos" asp-action="Index">Prestamos</a></li>
+                        <li><a asp-area="" asp-controller="Devoluciones" asp-action="Index">Devoluciones</a></li>
+                        <li><a asp-area="" asp-controller="Sanciones" asp-action="Index" >Sanciones</a></li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a  asp-area="" asp-controller="Usuarios" asp-action="Login">Iniciar sesion</a>
+                        }
+                    </ul>
+                </nav>
+>>>>>>> Stashed changes
             </div>
-        </nav> 
+        </div>
     </header>
     <div class="container mb-1">
         <main role="main" class="pb-3">

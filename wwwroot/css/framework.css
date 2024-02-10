@@ -90,7 +90,7 @@ It should be used in conjunction with a second class or ID
 
 /* HTML 5 Overrides
 --------------------------------------------------------------------------------------------------------------- */
-address, article, aside, figcaption, figure, footer, header, main, nav, section{display:block; margin:0; padding:0;}
+address, article, aside, figcaption, figure, footer, header, main, section{display:block; margin:0; padding:0;}
 
 
 /* Grid

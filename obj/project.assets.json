@@ -11318,11 +11318,19 @@
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< Updated upstream
       "projectUniqueName": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
       "projectName": "tallerbiblioteca",
       "projectPath": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
       "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\obj\\",
+=======
+      "projectUniqueName": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\tallerbiblioteca\\tallerbiblioteca.csproj",
+      "projectName": "tallerbiblioteca",
+      "projectPath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\tallerbiblioteca\\tallerbiblioteca.csproj",
+      "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\tallerbiblioteca\\obj\\",
+>>>>>>> Stashed changes
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",

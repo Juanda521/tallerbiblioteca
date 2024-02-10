@@ -65,6 +65,7 @@
                     <input asp-for="@Model.Prestamo.Id_peticion" value="@item.Id"  type="hidden">
                     
                     <button type="submit">aceptar</button>
+<<<<<<< Updated upstream
                 </form> 
                 <button ><a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a></button>
             </td>
@@ -72,6 +73,24 @@
 }
     </tbody>
 </table>
+=======
+                    </form>  *@
+                        <button class="d-inline"><a asp-controller="Prestamos" asp-action="Created" asp-route-id="@item.Id"><i class="fa-solid fa-circle-check fa-2xl" style="color: #1e6042;"></i></a></button>
+                        <button class="d-inline ms-2"><a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark fa-2xl" style="color: #fa0000;"></i></a></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="pagination p1">
+            <ul>
+                <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+                <a href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]">
+                <li><<</li></a>
+                @for (var i = 1; i <= Model.TotalItems; i++)
+                {
+>>>>>>> Stashed changes
 
 @section Scripts{
     @{

@@ -5,24 +5,29 @@
 @{
     ViewData["Title"] = "Index";
 }
+<h1 class="fw-bold fs-1 text-center ">Libros</h1>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <p>
             <button class="mt-1 button" > <a asp-action="Create">  Registrar </a></button> 
         </p>
     </div>
 
-    <div class="col-4">
-        <form asp-action="Index"> 
-            <p>
+    <div class="col-5">
+        <form asp-action="Index" > 
+            <p class="d-flex align-items-center">
                 <input type="text" name="busqueda" placeholder="Nombre libro" class="form-control"/>
                 <button type="submit" class="ms-4 mt-1 button" value="Buscar">Buscar</button>
             </p>
         </form>
     </div>
+<<<<<<< Updated upstream
     <div class="col-md-4 pt-2">
         <h2 class="fw-bold text-center pt-4">Libros</h2>
     </div>
+=======
+   
+>>>>>>> Stashed changes
 </div>
 <div class="row">
     <div class="col-10">
@@ -52,6 +57,7 @@
                             @* @Html.DisplayFor(modellibro => libro.CantidadLibros) *@
                             @libro.CantidadLibros
                         </td>
+<<<<<<< Updated upstream
                         <td>
                             @* @Html.DisplayFor(modellibro => libro.Descripcion) *@
                             @libro.Descripcion
@@ -63,6 +69,84 @@
                             <!-- Button trigger modal -->
                             <button type="button" class="button"  data-bs-toggle="modal" data-bs-target="#create_@libro.Id">
                             Añadir Ejemplar
+=======
+                        <td style="width: 220px;">
+                            <button class="d-inline m-1 "><a asp-action="Edit" asp-route-id="@libro.Id"><i class="fa-solid fa-file-pen fa-xl" style="color: #1e6042;"></i></a></button>
+                            
+                            @* <!-- este es el boton que abre el modal para ver información del libro -->                          *@
+                            <button data-bs-target="#info_@libro.Id" data-bs-toggle="modal" class="d-inline m-1 "><i class="fa-solid fa-circle-info fa-xl " style="color: #7b7b7c"></i></button>
+                            
+                            @* <!-- este es el modal de información del libro --> *@
+                            <div class="modal fade" id="info_@libro.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">@libro.Nombre</h5>
+                                            <button type="button" class="boton-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <span>@libro.Descripcion</span>
+                                            </div>
+                                            <br>
+                                            <span style="color: @(libro.Estado == "ACTIVO" ? "green" : "red")">@libro.Estado</span>
+                                            <hr>
+                                           
+                                            <div class="row">
+                                               
+                                            <div class="col-4">
+                                                <img class="img-fluid w-50 h-auto" src="data:Images;base64,@libro.ImagenLibro" alt="fallo en la imagen" srcset="">
+                                            </div>
+                                            <div class="col-4">
+                                                <span> Generos</span> 
+                                                    <ul>
+                                                        @foreach(var item in libro.Generos){
+                                                             <li>@item.NombreGenero</li>
+                                                        }
+                                                       
+                                                    </ul>
+
+                                                <span>Autores</span>
+                                                    <ul>
+                                                        @foreach(var item in libro.Autores){
+                                                            <li>@item.NombreAutor</li>
+                                                        }
+                                                    </ul>
+                                            </div>
+                                            <div class="col-4">
+                                                Ejemplares
+                                                <br>
+                                                @{
+                                                    if(libro.Ejemplares.Count<1){
+                                                        <span class="text-danger"> No hay ejemplares asociados a este libro </span>
+                                                    }
+                                                }
+                                                <ul>
+                                                    @foreach(var item in libro.Ejemplares){
+                                                        <li> Isbn_libro : @item.Isbn_libro 
+                                                            <br>
+                                                            <span>estado:</span>
+                                                            <span style="color: @(item.EstadoEjemplar == "NO_DISPONIBLE" ? "red" : (@item.EstadoEjemplar == "EN PRESTAMO" ? "red"  : "green"))"> @item.EstadoEjemplar</span> 
+                                                        </li>
+                                                      
+                                                        
+                                                    }
+                                                </ul>
+                                            </div>
+                                            </div>
+                                           
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="botonDelete Deletemedium mt-2" data-bs-dismiss="modal">Cerrar</button>
+
+                                        </div>
+                                   
+                                    </div>
+                                </div>
+                            </div>
+                          
+                            <button  class="d-inline"data-bs-toggle="modal" data-bs-target="#create_@libro.Id"><i class="fa-solid fa-plus fa-xl " style="color: #000000;"></i>
+>>>>>>> Stashed changes
                             </button>
                             <!-- Modal -->
                             <div class="modal fade" id="create_@libro.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

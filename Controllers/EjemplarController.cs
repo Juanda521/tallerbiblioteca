@@ -27,16 +27,27 @@ namespace tallerbiblioteca.Controllers
             _librosServices = librosServices;
         }
 
+<<<<<<< Updated upstream
         public async Task<IActionResult> Index(string busqueda,int Numero_pagina = 1, int itemsPagina  = 8)
+=======
+        public async Task<IActionResult> Index(string busqueda,int pagina = 1, int itemsPagina  = 6)
+>>>>>>> Stashed changes
         {
             var ejemplares  = await _ejemplarServices.ObtenerEjemplares();
             if (busqueda != null){
                 busqueda = busqueda.ToLower();
-                ejemplares = ejemplares.Where (e=>e.Id.ToString().Contains(busqueda)  || e.Libro.Nombre.ToLower().Contains(busqueda)  || e.Isbn_libro.ToString().Contains(busqueda ) || e.EstadoEjemplar.ToString().Contains(busqueda )).ToList();
+                ejemplares = ejemplares.Where (e=>e.Id.ToString().Contains(busqueda)  || e.Libro.Nombre.ToLower().Contains(busqueda) || e.Libro.Id.ToString().Contains(busqueda)  || e.Isbn_libro.ToString().Contains(busqueda ) || e.EstadoEjemplar.ToLower().Replace("_", " ").Contains(busqueda )).ToList();
             }
             var totalEjemplares = ejemplares.Count;
+<<<<<<< Updated upstream
             var ejemplaresPaginados = ejemplares.Skip((Numero_pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
             Paginacion<Ejemplar> paginacion  = new(ejemplaresPaginados,totalEjemplares,Numero_pagina,itemsPagina);
+=======
+            int total = (totalEjemplares / itemsPagina)+1;
+            var ejemplaresPaginados = ejemplares.Skip((pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
+            Paginacion<Ejemplar> paginacion  = new(ejemplaresPaginados,total,pagina,itemsPagina);
+             ViewData["libros"] = new SelectList(await _librosServices.ObtenerLibros(),"Id","Nombre");
+>>>>>>> Stashed changes
             return View(paginacion);
                             
         }
@@ -58,11 +69,10 @@ namespace tallerbiblioteca.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int Id,string Estado)
+        public async Task<IActionResult> Edit(int Id)
         {
             var ejemplar = await _ejemplarServices.BuscarEjemplar(Id);
             if(ejemplar!=null){
-                ejemplar.EstadoEjemplar  = Estado;
                 MensajeRespuestaValidacionPermiso(await _ejemplarServices.Edit(User,ejemplar));
             }else{
                 Console.WriteLine("no se esta encontrando ejemplar con el id:"+Id);

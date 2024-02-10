@@ -124,6 +124,16 @@ namespace tallerbiblioteca.Services
                 
                 if(ejemplar!=null){
 
+                    Console.WriteLine(ejemplar.EstadoEjemplar);
+                    if (ejemplar.EstadoEjemplar.Equals("DISPONIBLE"))
+                    {
+                        ejemplar.EstadoEjemplar = "NO_DISPONIBLE";
+                    }
+                    else
+                    {
+                        ejemplar.EstadoEjemplar = "DISPONIBLE";
+                    }
+
                     _context.Update(ejemplar);
                     await _context.SaveChangesAsync();
                     Console.WriteLine("ya debio haber editado");

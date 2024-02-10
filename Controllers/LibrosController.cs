@@ -22,7 +22,7 @@ namespace tallerbiblioteca.Controllers
             _hostingEnviroment= hostingEnviroment;
         }
 
-        public async Task<IActionResult> Index(string busqueda,int pagina = 1, int itemsPagina  = 4)
+        public async Task<IActionResult> Index(string busqueda,int pagina = 1, int itemsPagina  = 6)
         {
 
             LibroViewModel libroViewModel = new()
@@ -36,11 +36,25 @@ namespace tallerbiblioteca.Controllers
                 libroViewModel.Libros=_context.Libros.Where(l=>l.Nombre.ToLower().Contains(busqueda)).ToList();
             }
             int totalLibros = libroViewModel.Libros.Count;
+<<<<<<< Updated upstream
+=======
+
+            int total  = (totalLibros/itemsPagina)+1;
+            
+
+            foreach (var item in libroViewModel.Libros)
+            {
+                item.Generos =  await _librosServices.RelacionarGeneros(item.Id);
+                item.Autores = await _librosServices.RelacionarAutores(item.Id);
+                item.Ejemplares = await _librosServices.RelacionarEjemplares(item.Id);
+            }
+
+>>>>>>> Stashed changes
       
             var LibrosPaginados = libroViewModel.Libros.Skip((pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
 
         
-            Paginacion<Libro> paginacion = new Paginacion<Libro>(LibrosPaginados, totalLibros, pagina, itemsPagina)
+            Paginacion<Libro> paginacion = new Paginacion<Libro>(LibrosPaginados, total, pagina, itemsPagina)
             {
                 LibroViewModel = libroViewModel
             };
@@ -207,8 +221,21 @@ namespace tallerbiblioteca.Controllers
             }
             try
             {
+<<<<<<< Updated upstream
                 _context.Update(libro);
                 await _context.SaveChangesAsync();
+=======
+                Console.WriteLine("hablalo");
+                byte[] LibroImagen= new byte[0];
+                if(ImagenLibro !=null  && ImagenLibro.Length >0 )
+                {
+                    libro = _librosServices.ConvertirImagen(LibroImagen,libro,ImagenLibro);
+                }else{
+                    libro.ImagenLibro = await _librosServices.CambiarImagen(libro);
+                    Console.WriteLine("va actualizar sin imagen");
+                }
+               MensajeRespuestaValidacionPermiso(_librosServices.MensajeRespuestaValidacionPermiso(await _librosServices.Editar(libro, User)));
+>>>>>>> Stashed changes
             }
             catch (DbUpdateConcurrencyException)
             {

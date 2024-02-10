@@ -1,8 +1,14 @@
 {
   "version": 2,
+<<<<<<< Updated upstream
   "dgSpecHash": "jLwJFtUzfBERT0/lIXdzvZ9WfslpsIMZ3De5rSbD5XpxcvXwxS9+N4k+J2sXZaFWMnjA1zPBCNFX3tKmZXlLSA==",
   "success": true,
   "projectFilePath": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
+=======
+  "dgSpecHash": "CBCLcvOIw0RTb1tl0e9l3fzkQVM4q/F6yreOlgJuj51l/A8NeQ6J0nBdp8QXDXBYK9CdOllU8tt5UDOxhfJIUg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\tallerbiblioteca\\tallerbiblioteca.csproj",
+>>>>>>> Stashed changes
   "expectedPackageFiles": [
     "C:\\Users\\ASUS\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

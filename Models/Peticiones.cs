@@ -18,6 +18,15 @@ namespace tallerbiblioteca.Models
         public int Id_usuario { get; set; }
         public Usuario Usuario {get;set;} = new();
 
+        [ForeignKey("Reserva")]
+
+        public int? Id_reserva {get; set;}
+
+         public virtual Reserva Reserva { get; set; } = new();
+
+
+
+
         public DateTime FechaPeticion { get; set; }
         public string Motivo { get; set; }  = "Breve descripcion de la peticion";
 
