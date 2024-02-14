@@ -49,18 +49,47 @@ namespace tallerbiblioteca.Services
 
             return await query.ToListAsync();
         }
-
-
-
+        public async Task<List<Peticiones>>Buscarechazadas(DateTime? fechaini, DateTime? fechaFin, string? busqueda)
+        {
+        if (busqueda != null)
+        {
+                 return await _context.Peticiones
+                .Include(p => p.Usuario)
+                .Include(p => p.Ejemplar)
+                    .ThenInclude(e => e.Libro)
+                .Where(p =>p.Ejemplar.Libro.Nombre == busqueda || p.Usuario.Name == busqueda || p.Usuario.Apellido == busqueda && p.Estado == "RECHAZADA")
+                .ToListAsync();
+                }
+                else
+                {
+                    return await _context.Peticiones
+                .Include(p => p.Usuario)
+                .Include(p => p.Ejemplar)
+                    .ThenInclude(e => e.Libro)
+                .Where(p => p.Estado == "RECHAZADA" && p.FechaPeticion >= fechaini && p.FechaPeticion <= fechaFin)
+                .ToListAsync();
+                }
+            }
         public async Task<List<Peticiones>> Rechazadas()
         {
+            
             return await _context.Peticiones
             .Include(p => p.Usuario)
             .Include(p => p.Ejemplar)
                 .ThenInclude(e => e.Libro)
-            .Where(p => p.Estado == "RECHAZADA")
+            .Where(p => p.Estado == "RECHAZADA" )
             .ToListAsync();
         }
+
+        public async Task<List<Peticiones>> ObtenerpeticionesPdf()
+        {
+            return await _context.Peticiones
+        .Include(p => p.Usuario)
+        .Include(p => p.Ejemplar)
+            .ThenInclude(e => e.Libro)
+        .ToListAsync();
+        }
+        
         public async Task<List<Peticiones>> Obtenerpeticiones()
         {
             return await _context.Peticiones
@@ -70,7 +99,6 @@ namespace tallerbiblioteca.Services
         .Where(p => p.Estado == "EN ESPERA" || p.Estado == "ACEPTADA")
         .ToListAsync();
         }
-
         public async Task<List<Peticiones>> ObtenerpeticionesEnEspera()
         {
             var peticionesEnEspera = await _context.Peticiones
@@ -88,9 +116,7 @@ namespace tallerbiblioteca.Services
 
             return peticionesEnEspera;
         }
-
-
-        public async Task<Peticiones> Buscar(int id)
+        public async Task<Peticiones>Buscar(int id)
         {
             var peticion = await _context.Peticiones.Include(p => p.Usuario).Include(p => p.Ejemplar).ThenInclude(e => e.Libro).SingleAsync(p => p.Id == id);
             if (peticion != null)
@@ -101,12 +127,27 @@ namespace tallerbiblioteca.Services
             }
             return new();
         }
+        public async Task<List<Peticiones>> BuscarP(int userId)
+        {
+            var peticiones = await _context.Peticiones
+                .Include(p => p.Usuario)
+                .Include(p => p.Ejemplar)
+                .ThenInclude(e => e.Libro)
+                .Where(p => p.Usuario.Id == userId)
+                .ToListAsync();
 
+            foreach (var peticion in peticiones)
+            {
+                Console.WriteLine($"El id del ejemplar relacionado a la peticion es: {peticion.Ejemplar.Id}");
+                Console.WriteLine($"El nombre del libro relacionado del ejemplar relacionado a la peticion es: {peticion.Ejemplar.Libro.Nombre}");
+            }
+
+            return peticiones;
+        }
         public async Task<Prestamo>BuscarPeticionAceptada(int id){
 
             return await _context.Prestamos.SingleOrDefaultAsync(p=>p.Id_peticion == id);
         }
-
         public async Task<int> EliminarPeticion(ClaimsPrincipal User, int id)
         {
 
@@ -132,7 +173,6 @@ namespace tallerbiblioteca.Services
             Console.WriteLine("este es el status final: " + Status);
             return Status;
         }
-
         public async Task<int> Registrar(ClaimsPrincipal User, Peticiones peticion)
         {
 
@@ -184,17 +224,14 @@ namespace tallerbiblioteca.Services
             }
             return Status;
         }
-
         public int ObtenerRolUserOnline(ClaimsPrincipal User){
             return _configuracionServices.ObtenerRolUserOnline(User);
         }
-
         private DateTime ObtenerFechaActual()
         {
             return DateTime.Now;
 
         }
-       
         private async Task<bool> ValidacionPeticionPendiente(Peticiones peticion)
         {
 

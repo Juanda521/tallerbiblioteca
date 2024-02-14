@@ -1,0 +1,52 @@
+﻿@model tallerbiblioteca.Models.Reserva
+@using System.Security.Claims;
+<h1>Create</h1>
+<h4>Reserva</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" asp-controller="Reservas"method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="IdEjemplar" class="control-label"></label>
+                <select asp-for="IdEjemplar" class="form-control" asp-items="ViewBag.Ejemplares"></select>
+                <span asp-validation-for="IdEjemplar" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdUsuario" class="control-label"></label>
+                <select asp-for="IdUsuario" class="form-control" asp-items="ViewBag.Usuarios"></select>
+                <span asp-validation-for="IdUsuario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<script>
+    $(document).ready(function () {
+        $("form").submit(function () {
+            console.log("IdEjemplar:", $("#IdEjemplar").val());
+            console.log("IdUsuario:", $("#IdUsuario").val());
+        });
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+     
+    }
+        
+    }
+
+@{
+    Html.RenderPartial("~/Views/Redirigir.cshtml");
+}
+
+

@@ -21,7 +21,6 @@ namespace tallerbiblioteca.Models
 
         public string Estado {get; set;}  = "ACTIVO";
 
-          // Nuevas propiedades para los géneros y autores seleccionados
         [NotMapped]
         public List<int> GeneroIds { get; set; }
         [NotMapped]

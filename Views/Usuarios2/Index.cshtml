@@ -1,0 +1,143 @@
+﻿@* @model IEnumerable<tallerbiblioteca.Models.Usuario> *@
+    @model Paginacion<Usuario>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+<div class="row" style="color: black">
+    <div class="col-md-4 m-2">
+        <button><a asp-action="Create">Registrar</a></button>
+    </div>
+    <div class="col-4 m-2">
+        <form asp-action="Index">         
+                <input type="text" name="busqueda" placeholder="Documento/Nombre/Apellido/Correo" class="form-control form-input m-2"/>
+                <button type="submit">Buscar</button>
+        </form>
+    </div>
+</div>
+<div class=" m-3">
+    <p style="color: black">Total de Usuarios Registrados: @Model.Items.Count</p>
+    <table class="text-dark fs-5 mt-3">
+    <thead>
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+           Identificación
+        </th>
+        <th>
+            Nombre
+        </th>
+        <th>
+            Apellido
+        </th>
+        <th>
+            Correo
+        </th>
+        <th>
+            Estado
+        </th>
+        <th>
+          <div class="col-md-4 ">
+        <h2 class="fw-bold text-center ms-5 ps-5 ">Acciones</h2>
+    </div>
+        </th>
+    </tr>
+</thead>
+        <tbody>
+        @foreach (var usuario in Model.Items) {
+            <tr>
+            
+                    <td>
+                        @usuario.Id
+                    </td>
+                    <td>
+                        @usuario.Numero_documento
+                    </td>
+                    <td>
+                        @usuario.Name
+                    </td>
+                    <td>
+                        @usuario.Apellido
+                    </td>
+                    <td>
+                        @usuario.Correo
+                    </td>
+                    <td>
+                        @{
+                            string color; 
+                            if (usuario.Estado == "INHABILITADO" || usuario.Estado=="SUSPENDIDO")
+                            {
+                                color = "red"; 
+                            }
+                            else
+                            {
+                                color = "green";
+                            }
+                        }
+                        <span style="color: @color;">@usuario.Estado</span>
+                    </td>
+                    <td>
+                        @if(usuario.Estado == "INHABILITADO" || usuario.Estado == "SUSPENDIDO")
+                        {
+                        }
+                        else
+                        {
+                            <a class="Eliminar" asp-action="Inhabilitar" asp-route-id="@usuario.Id">Inhabilitar</a>
+                            <a class="Eliminar" asp-action="Suspender" asp-route-id="@usuario.Id">Suspender</a>
+                        }
+                        
+                        <a class="editar" asp-controller="Usuarios" asp-action="Informacion" asp-route-id="@usuario.Id">Información</a>
+                     
+                    </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+
+</div>
+
+<div class="row">
+    <div class="pagination p1">
+        <ul>
+            <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+            <a href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]">
+            <li><<</li></a>
+            @for (var i = 1; i <= Model.TotalItems; i++)
+            {
+
+                <a class=" me-1 @(Model.Numero_pagina == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+
+            }
+            @if (Model.Numero_pagina < Model.TotalItems)
+            {
+
+                <a href="?pagina=@(Model.Numero_pagina + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
+
+            }
+            <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">
+            <li>Fin</li></a>
+        </ul>
+    </div>
+</div>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @{
+        var Mensaje = TempData["Mensaje"] as string;
+        if (Mensaje != null)
+        {
+            var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+            <script>
+                const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+                const icono = "@mensaje.Icono";
+                MostrarMensajeUsuarios(icono, cuerpo);
+            </script>
+        }
+    }
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+

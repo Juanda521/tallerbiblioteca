@@ -30,117 +30,126 @@ namespace tallerbiblioteca.Controllers
             _ejemplarServices  = ejemplarServices;
         }
 
-        public async Task<IActionResult> Index(string busqueda,int pagina = 1, int itemsPagina  = 4)
+
+        public async Task<IActionResult> Index(string busqueda, int pagina = 1, int itemsPagina = 6)
         {
+            try
+            {
+                LibroViewModel libroViewModel = new()
+                {
+                    Libros = await _librosServices.ObtenerLibros()
+                };
 
-            LibroViewModel libroViewModel = new()
-            {
-                Libros = await _librosServices.ObtenerLibros()
-            };
-            //   var libro = await _context.Libros.ToListAsync();
-            if (busqueda!=null)
-            {
-                busqueda.ToLower();
-                libroViewModel.Libros  = _librosServices.busqueda(busqueda);
+                if (!string.IsNullOrEmpty(busqueda))
+                {
+                    busqueda.ToLower();
+                    libroViewModel.Libros = _librosServices.busqueda(busqueda);
+                }
+
+                int totalLibros = libroViewModel.Libros.Count;
+                int total = (totalLibros / itemsPagina) + 1;
+
+                foreach (var item in libroViewModel.Libros)
+                {
+                    item.Generos = await _librosServices.RelacionarGeneros(item.Id);
+                    item.Autores = await _librosServices.RelacionarAutores(item.Id);
+                    item.Ejemplares = await _librosServices.RelacionarEjemplares(item.Id);
+                }
+
+                var LibrosPaginados = libroViewModel.Libros.Skip((pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
+
+                Paginacion<Libro> paginacion = new Paginacion<Libro>(LibrosPaginados, total, pagina, itemsPagina)
+                {
+                    LibroViewModel = libroViewModel
+                };
+
+                return View(paginacion);
             }
-            int totalLibros = libroViewModel.Libros.Count;
-            
-
-            foreach (var item in libroViewModel.Libros)
+            catch (Exception ex)
             {
-                item.Generos =  await _librosServices.RelacionarGeneros(item.Id);
-                item.Autores = await _librosServices.RelacionarAutores(item.Id);
-                item.Ejemplares = await _librosServices.RelacionarEjemplares(item.Id);
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en el método Index: {ex.Message}");
+                // Puedes redirigir a una página de error o devolver una vista de error
+                return View("Error");
             }
-
-      
-            var LibrosPaginados = libroViewModel.Libros.Skip((pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
-
-        
-            Paginacion<Libro> paginacion = new Paginacion<Libro>(LibrosPaginados, totalLibros, pagina, itemsPagina)
-            {
-                LibroViewModel = libroViewModel
-            };
-
-
-            return View(paginacion);
         }
+
 
        
-        [AllowAnonymous]
-        public async Task<IActionResult> Catalog(string busqueda,string[] generosSeleccionados,string[] autoresSeleccionados,int pagina  = 1,int itemsPagina  = 8)
+       
+       [AllowAnonymous]
+        public async Task<IActionResult> Catalog(string busqueda, string[] generosSeleccionados, string[] autoresSeleccionados, int pagina = 1, int itemsPagina = 8)
         {   
-         
-            var libros = await _librosServices.ObtenerLibros();
-            //si viene algo en el parametro busqueda procederemos a añadir a la lista de libros a mostrar los libros que coincidan con la busqueda
-            if(busqueda!=null){
-                busqueda.ToLower();
-                libros = _librosServices.busqueda(busqueda);
-            }
-
-            if (generosSeleccionados!=null || generosSeleccionados.Length>0){
-                Console.WriteLine("estan llegando los generos");
-                foreach (var item in generosSeleccionados){
-                    if (int.TryParse(item, out int generoId))
-                    {
-                        Console.WriteLine($"Género ID: {generoId}");
-                        libros = await _librosServices.BusquedaporGeneros(generoId);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"No se pudo convertir {item} a entero.");
-                        // Puedes manejar el caso en el que la conversión no sea exitosa
-                    }
-                }
-            }
-
-            if (autoresSeleccionados!=null || autoresSeleccionados.Length>0){
-                Console.WriteLine("estan llegando los autores");
-                foreach (var item in autoresSeleccionados)
-                {
-                    if(int.TryParse(item,out int autorId)){
-                        
-                        libros = await  _librosServices.BusquedaporAutores(autorId);
-                    }else{
-                        Console.WriteLine($"No se pudo convertir {item} a entero.");
-                    }
-                }
-            }
-            CatalogoViewModel catalogoViewModel = new()
+            try
             {
-                Ejemplares = await _ejemplarServices.ObtenerEjemplares(),
-                Libros = libros,
-                AutoresRelacionados =  await _librosServices.ObtenerAutoresRelacionados(),
-                GenerosRelacionados = await _librosServices.ObtenerGenerosRelacionados(),
-                Generos = await _librosServices.ObtenerGeneros(),
-                Autores = await _librosServices.ObtenerAutores(),
-            
-            };
+                var libros = await _librosServices.ObtenerLibros();
 
-            var cantidadLibros = catalogoViewModel.Libros.Count;
-            var libross = (cantidadLibros) / 8; 
+                // Filtrar por búsqueda
+                if (!string.IsNullOrEmpty(busqueda))
+                {
+                    busqueda.ToLower();
+                    libros = _librosServices.busqueda(busqueda);
+                }
 
-            var catalogoPaginado = catalogoViewModel.Libros.Skip((pagina-1)*itemsPagina).Take(itemsPagina).ToList();
+                // Filtrar por géneros seleccionados
+                if (generosSeleccionados != null && generosSeleccionados.Length > 0)
+                {
+                    var generoIds = generosSeleccionados.Select(int.Parse);
+                    libros = libros.Where(libro => libro.Generos.Any(genero => generoIds.Contains(genero.Id))).ToList();
+                }
 
-            Paginacion<Libro> paginacionCatalogo = new Paginacion<Libro>(catalogoPaginado,libross,pagina,itemsPagina){
-                CatalogoViewModel  = catalogoViewModel
-            };
-            return View(paginacionCatalogo);
+                // Filtrar por autores seleccionados
+                if (autoresSeleccionados != null && autoresSeleccionados.Length > 0)
+                {
+                    var autorIds = autoresSeleccionados.Select(int.Parse);
+                    libros = libros.Where(libro => libro.Autores.Any(autor => autorIds.Contains(autor.Id))).ToList();
+                }
+
+                CatalogoViewModel catalogoViewModel = new()
+                {
+                    Ejemplares = await _ejemplarServices.ObtenerEjemplares(),
+                    Libros = libros,
+                    AutoresRelacionados =  await _librosServices.ObtenerAutoresRelacionados(),
+                    GenerosRelacionados = await _librosServices.ObtenerGenerosRelacionados(),
+                    Generos = await _librosServices.ObtenerGeneros(),
+                    Autores = await _librosServices.ObtenerAutores(),
+                };
+
+                int totalLibros = catalogoViewModel.Libros.Count;
+                int totalPaginas = (int)Math.Ceiling((double)totalLibros / itemsPagina);
+
+                var catalogoPaginado = catalogoViewModel.Libros.Skip((pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
+
+                Paginacion<Libro> paginacionCatalogo = new(catalogoPaginado, totalPaginas, pagina, itemsPagina)
+                {
+                    CatalogoViewModel = catalogoViewModel
+                };
+
+                return View(paginacionCatalogo);
+            }
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en el método Catalog: {ex.Message}");
+                // Puedes redirigir a una página de error o devolver una vista de error
+                return View("Error");
+            }
         }
 
-        public List<Libro> LibrosRelacionadosPorGenero(int idLibro)
+        [AllowAnonymous]
+        public IActionResult LibrosRelacionadosPorGenero(int idLibro)
         {
-            var generosDelLibroActual = _context.GenerosLibros
-                .Where(gl => gl.Id_libro == idLibro)
-                .Select(gl => gl.Id_genero)
-                .ToList();
-
-            var librosRelacionados = _context.GenerosLibros
-                .Where(gl => generosDelLibroActual.Contains(gl.Id_genero) && gl.Id_libro != idLibro)
-                .Select(gl => gl.Libro)
-                .Distinct()
-                .ToList();
-                return librosRelacionados;
+            try
+            {
+                var librosRelacionados = _librosServices.ObtenerLibrosRelacionadosPorGenero(idLibro);
+                return Ok(librosRelacionados);
+            }
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error al obtener los libros relacionados por género desde el controlador: {ex.Message}");
+                return StatusCode(500, "Error interno del servidor"); // O devuelve otro resultado de acuerdo a tus necesidades
+            }
         }
 
         // GET: Libros/Create
@@ -152,94 +161,142 @@ namespace tallerbiblioteca.Controllers
             return View();
         }
 
-        // POST: Libros/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Cantidad,Descripcion,AutorIds,GeneroIds,ImagenLibro")] Libro libro,IFormFile ? ImagenLibro)
+       
+
+        private async Task RegistrarGenerosYAutores(Libro libro)
         {
-            Console.WriteLine("hola desde registrar");
-            Console.WriteLine("------------------------------------------------------");
-            byte[] LibroImagen= new byte[0];
-            if(ImagenLibro !=null  && ImagenLibro.Length >0 )
+            Console.WriteLine("Registrando géneros y autores del libro...");
+
+            if (libro.GeneroIds != null)
             {
-                libro = _librosServices.ConvertirImagen(LibroImagen,libro,ImagenLibro);
-            }else{
-                string rutaAlterna= Path.Combine(_hostingEnviroment.WebRootPath,"Images","default.jpg");
-                LibroImagen= System.IO.File.ReadAllBytes(rutaAlterna);
-                libro.ImagenLibro= Convert.ToBase64String(LibroImagen);
-            }
-            Console.WriteLine("vamos a hacer la funcion registrar");
-            int status = await _librosServices.Registrar(libro,User);
-           if (status == 200)
-           {
-             Console.WriteLine("vamos a registrar generos y autores");
-            if (libro.GeneroIds!= null){
                 foreach (var generoId in libro.GeneroIds)
                 {
-                    var genero = _context.Genero.Find(generoId);
+                    var genero = await _context.Genero.FindAsync(generoId);
                     if (genero != null)
                     {
-                        var GeneroLibro = new GeneroLibro
+                        var generoLibro = new GeneroLibro
                         {
                             Id_genero = genero.Id,
                             Genero = genero,
                             Libro = libro,
                             Id_libro = libro.Id
                         };
-
-                        _context.GenerosLibros.Add(GeneroLibro);
-
+                        _context.GenerosLibros.Add(generoLibro);
                     }
                 }
             }
-            if (libro.AutorIds != null) {
-            foreach (var autorId in libro.AutorIds)
-            {
-                var autor = _context.Autores.Find(autorId);
-                if (autor != null)
-                {
-                    var autorLibro = new AutorLibro
-                    {
-                        Id_autor = autor.Id,
-                        Autor = autor,
-                        Libro  = libro,
-                        Id_libro = libro.Id
-                    };
 
-                    _context.AutoresLibros.Add(autorLibro);
+            if (libro.AutorIds != null)
+            {
+                foreach (var autorId in libro.AutorIds)
+                {
+                    var autor = await _context.Autores.FindAsync(autorId);
+                    if (autor != null)
+                    {
+                        var autorLibro = new AutorLibro
+                        {
+                            Id_autor = autor.Id,
+                            Autor = autor,
+                            Libro = libro,
+                            Id_libro = libro.Id
+                        };
+                        _context.AutoresLibros.Add(autorLibro);
+                    }
                 }
             }
+        }
+
+        // POST: Libros/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Cantidad,Descripcion,AutorIds,GeneroIds,ImagenLibro")] Libro libro, IFormFile? ImagenLibro)
+        {
+            try
+            {
+                Console.WriteLine("Registrando libro...");
+
+                 Console.WriteLine("------------------------------------------------------");
+                byte[] LibroImagen = new byte[0];
+                if (ImagenLibro != null && ImagenLibro.Length > 0)
+                {
+                    libro = _librosServices.ConvertirImagen(LibroImagen, libro, ImagenLibro);
+                }
+                else
+                {
+                    string rutaAlterna = Path.Combine(_hostingEnviroment.WebRootPath, "Images", "default.jpg");
+                    LibroImagen = System.IO.File.ReadAllBytes(rutaAlterna);
+                    libro.ImagenLibro = Convert.ToBase64String(LibroImagen);
+                }
+                Console.WriteLine("vamos a hacer la funcion registrar");
+                int status = await _librosServices.Registrar(libro, User);
+
+                if (status == 200)
+                {
+                    // Registrar los géneros y autores del libro
+                    await RegistrarGenerosYAutores(libro);
+                    
+                    // Guardar los cambios en la base de datos
+                    await _context.SaveChangesAsync();
+
+                    Console.WriteLine("Libro registrado exitosamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se pudo registrar el libro.");
+                }
+
+                // Mostrar mensaje de respuesta
+                MensajeRespuestaValidacionPermiso(_librosServices.MensajeRespuestaValidacionPermiso(status));
+
+                return RedirectToAction(nameof(Index));
             }
-            await _context.SaveChangesAsync();
-            
-             
-           } else{
-            Console.WriteLine("no debio haber hecho nada");
-           }
-           MensajeRespuestaValidacionPermiso(_librosServices.MensajeRespuestaValidacionPermiso(status));
-           return RedirectToAction(nameof(Index));
-         
-           
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error al crear el libro: {ex.Message}");
+                return StatusCode(500, "Error interno del servidor");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CambiarEstado(){
+        public async Task<IActionResult> CambiarEstado()
+        {
+            try
+            {
+                string idLibro = Request.Form["libroId"];
+                if (int.TryParse(idLibro, out int idLibroInt))
+                {
+                    Console.WriteLine("ID del libro a actualizar: {0}", idLibroInt);
 
-            string idLibro = Request.Form["libroId"];
-            if (int.TryParse(idLibro, out int idLibroInt)){
-                Console.WriteLine("id del libro a actualizar: {0}", idLibroInt);
-                
-                MensajeRespuestaValidacionPermiso(_librosServices.MensajeRespuestaValidacionPermiso(await _librosServices.CambiarEstado(await _librosServices.BuscarLibroAsync(idLibroInt),User)));
-                return RedirectToAction("Index","Libros");
-            }else{
-                Console.WriteLine("no esta parseando el libro");
-                return RedirectToAction("Index","Libros");
+                    var libro = await _librosServices.BuscarLibroAsync(idLibroInt);
+                    if (libro != null)
+                    {
+                        var status = await _librosServices.CambiarEstado(libro, User);
+                        MensajeRespuestaValidacionPermiso(_librosServices.MensajeRespuestaValidacionPermiso(status));
+                    }
+                    else
+                    {
+                        Console.WriteLine("El libro no fue encontrado.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se pudo analizar el ID del libro.");
+                }
             }
-            // return RedirectToAction(nameof(index));
+            catch (Exception ex)
+            {
+                // Manejo de excepciones
+                Console.WriteLine($"Ocurrió un error al cambiar el estado del libro: {ex.Message}");
+                return StatusCode(500, "Error interno del servidor");
+            }
+
+            return RedirectToAction("Index", "Libros");
         }
+
 
         private void MensajeRespuestaValidacionPermiso(ResponseModel resultado){
             
@@ -282,8 +339,10 @@ namespace tallerbiblioteca.Controllers
                 byte[] LibroImagen= new byte[0];
                 if(ImagenLibro !=null  && ImagenLibro.Length >0 )
                 {
+                    
                     libro = _librosServices.ConvertirImagen(LibroImagen,libro,ImagenLibro);
                 }else{
+                    libro.ImagenLibro = await _librosServices.DevolverImagen(libro.Id);
                     Console.WriteLine("va actualizar sin imagen");
                 }
                MensajeRespuestaValidacionPermiso(_librosServices.MensajeRespuestaValidacionPermiso(await _librosServices.Editar(libro, User)));

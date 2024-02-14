@@ -1,60 +1,105 @@
 ﻿@using System.Security.Claims;
 @using tallerbiblioteca.Controllers
-@model PaginacionPubli<Publicaciones>
+@model Paginacion<Publicaciones>
 
 @{
     ViewData["Title"] = "Index";
 }
-<link rel="stylesheet" href="~/css/Publicaciones.css" asp-append-version="true" /> 
+<link rel="stylesheet" href="~/css/Publicaciones.css" asp-append-version="true" />
+<div style="color: black">
 <div class="">
     <h1>Publicaciones</h1>
     @if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
     {
-        <a asp-action="Create" class="boton">Crear nueva publicación</a>
+        <button><a asp-action="Create">Crear nueva publicación</a></button>
+        <button class="Eliminar"><a asp-action="Desactivadas" >Desactivadas</a></button>
     }
 </div>
-
-<div class="container">
-    @foreach (var item in Model.Publicaciones)
-    {
-        <div class="card">
-            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(item.Imagen))" class="card-img" alt="Imagen">
-            <div class="card-content">
-                <h5 class="card-title">@item.Tipo</h5>
-                <p class="card-description">@item.Nombre</p>
-                <div class="card-dates">
-                    <p>Fecha de inicio: @item.FechaInicio</p>
-                    <p>Fecha de fin: @item.FechaFin</p>
-                </div>
-                @if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
-                {
-                    <div class="card-buttons">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="boton me-3 ">Editar</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="botonDelete Deletemedium">Desactivar </a>
-                    </div>
-                }
-            </div>
-        </div>
-    }
-    <div class="pagination p1">
-        <ul>
-            <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
-            <a href="?pagina=@(Model.PageNumber - 1)&busqueda=@Context.Request.Query["busqueda"]">
-            <li><<</li></a>
-            @for (var i = 1; i <= Model.TotalItems; i++)
-            {
-
-                <a class=" me-1 @(Model.PageNumber == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
-
-            }
-            @if (Model.PageNumber < Model.TotalItems)
-            {
-
-                <a href="?pagina=@(Model.PageNumber + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
-
-            }
-            <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">
-            <li>Fin</li></a>
-        </ul>
+<div class="d-flex flex-column me-4">
+    <div class="search-form">
+        <form asp-action="Index" asp-controller="Publicaciones" class="ms-4">
+            <p class="mb-0">
+                <label>Filtro Busqueda</label>
+                <input type="text" name="busqueda" placeholder="Nombre-Tipo" class="form-control" />
+            </p>
+            <p class="mt-2">
+                <span>DESDE: </span>
+                <input type="date" name="fechaini" class="form-control" />
+                <span>HASTA: </span>
+                <input type="date" name="fechafin" class="form-control" /><br><div class="mt-2">
+                <button class="editar" style="color: black"type="submit">Buscar</button>
+                        </div>
+            </p>
+        </form>
     </div>
-</div>
+    <div class="container">
+        @foreach (var item in Model.Items)
+        {
+            <div class="card">
+                <img src="data:image/jpeg;base64,@(Convert.ToBase64String(item.Imagen))" class="card-img" alt="Imagen">
+                <div class="card-content">
+                    <h3>TIPO:</h3>
+                    <p class="card-description">@item.Tipo</p>
+                    <h4>NOMBRE:</h4>
+                    <p class="card-description">@item.Nombre</p>
+                    <h3>DESCRIPCIÓN:</h3>
+                    <p class="card-description">@item.Descripcion</p>
+                    <div class="card-dates">
+                        <p>Fecha de inicio: @item.FechaInicio</p>
+                        <p>Fecha de fin: @item.FechaFin</p>
+                    </div>
+                    @if (User.FindFirst(ClaimTypes.Role)?.Value == "1" || User.FindFirst(ClaimTypes.Role)?.Value == "3")
+                    {
+                        <div class="card-buttons">
+                            <button class="editar"><a asp-action="Edit" asp-route-id="@item.Id" class="mt-2">Editar</a></button>
+                                <button class="Eliminar ml-2" style="margin-left: 10px"><a asp-action="Delete" asp-route-id="@item.Id">Desactivar </a></button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        <div class="pagination p1">
+            <ul>
+                <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+                <a href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]">
+                <li><<</li></a>
+                @for (var i = 1; i <= Model.TotalItems; i++)
+                {
+
+                    <a class=" me-1 @(Model.Numero_pagina == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+
+                }
+                @if (Model.Numero_pagina < Model.TotalItems)
+                {
+
+                    <a href="?pagina=@(Model.Numero_pagina + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
+
+                }
+                <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">
+                <li>Fin</li></a>
+            </ul>
+        </div>
+    </div>
+    </div>
+    @section Scripts{
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        @{
+            var Mensaje = TempData["Mensaje"] as string;
+
+            if (Mensaje != null)
+            {
+                var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+                <script>
+                    console.log("se va mostrar");
+
+                    const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+                    const icono = "@mensaje.Icono";
+                    MostrarMensajeUsuarios(icono, cuerpo);
+                </script>
+
+            }
+
+        }
+    }

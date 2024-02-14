@@ -6,38 +6,42 @@
     ViewData["Title"] = "Prestamos";
 }
 
-  <h1 class="fw-bold fs-1 text-center ">Prestamos</h1>
+  <h1 class="fw-bold fs-1 text-center" style="color: black">Prestamos</h1>
 <div class="row">
     <div class="col-md-2">
         <p>
             @if ((User.FindFirst(ClaimTypes.Role)?.Value == "1")||(User.FindFirst(ClaimTypes.Role)?.Value == "3")){
-                 <a class="boton medium" asp-action="Create">  Registrar </a>
+                <button><a class="" asp-action="Create">  Registrar </a></button>
+                <form asp-controller="/Pdf" asp-action="GenerarPdfPrestamos" method="post" class="mt-2">
+                    <button type="submit">Generar reporte</button>
+                </form>
             }
            
         </p>
     </div>
+    @if ((User.FindFirst(ClaimTypes.Role)?.Value == "1") || (User.FindFirst(ClaimTypes.Role)?.Value == "3"))
+    {
+        <div class="col-8 mb-4">
+            <form asp-action="Index" class="row ">
+                <div class="col-md-4">
+                    <label for="busqueda" class="form-label">Búsqueda:</label>
+                    <input type="text" name="busqueda" id="busqueda" placeholder="Identificación usuario |  Id ejemplar" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label for="fechaInicio" class="form-label">Desde:</label>
+                    <input type="date" name="fechaInicio" id="fechaInicio" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label for="fechaFin" class="form-label">Hasta:</label>
+                    <input type="date" name="fechaFin" id="fechaFin" class="form-control" />
+                </div>
+                <div class="col-md-2 mt-3">
+                    <button type="submit" class="">Buscar</button>
+                </div>
+            </form>
+        </div>
+    }
 
-  <div class="col-8 mb-4">
-    <form asp-action="Index" class="row ">
-        <div class="col-md-4">
-            <label for="busqueda" class="form-label">Búsqueda:</label>
-            <input type="text" name="busqueda" id="busqueda" placeholder="Identificación usuario |  Id ejemplar" class="form-control" />
-        </div>
-        <div class="col-md-3">
-            <label for="fechaInicio" class="form-label">Desde:</label>
-            <input type="date" name="fechaInicio" id="fechaInicio" class="form-control" />
-        </div>
-        <div class="col-md-3">
-            <label for="fechaFin" class="form-label">Hasta:</label>
-            <input type="date" name="fechaFin" id="fechaFin" class="form-control" />
-        </div>
-        <div class="col-md-2 mt-3">
-            <button type="submit" class="boton medium ">Buscar</button>
-        </div>
-    </form>
-</div>
-
-   
 </div>
 <table>
     <thead>
@@ -49,7 +53,9 @@
             <th> Fecha Prestamo</th>
             <th> Fecha Devolución</th>
             <th> Estado </th>
-            <th></th>
+              @if ((User.FindFirst(ClaimTypes.Role)?.Value == "1") || (User.FindFirst(ClaimTypes.Role)?.Value == "3")){
+            <th>Acción</th>
+              }
         </tr>
     </thead>
     <tbody>
@@ -77,26 +83,17 @@
           <td style="color: @GetColorForEstado(item.Estado)">
     @Html.DisplayFor(modelItem => item.Estado)
 </td>
-
-            <td>
-                @* <form asp-controller="Prestamos" asp-action="Create" method="post" >
-                    <input asp-for="@Model.PeticionesViewModel.Prestamo.Id_peticion" value="@item.Id"  type="hidden">
-                    <button type="submit">aceptar</button>
-                </form>  *@
-
-                @* <button class="d-inline m-1 "><a asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-file-pen fa-xl" style="color: #82B440;"></i></a></button> *@
-                            
-                @* <button class="d-inline" ><a asp-controller = "Prestamos" asp-action="Created" asp-route-id="@item.Id"> <i class="fa-solid fa-arrow-rotate-left fa-xl" style="color: #000000;"></i></a></button> *@
-               
-                <button data-bs-target="#create_@item.Id" data-bs-toggle="modal" class="boton medium mb-1"> Devolver </button>
-                
+                @if ((User.FindFirst(ClaimTypes.Role)?.Value == "1") || (User.FindFirst(ClaimTypes.Role)?.Value == "3"))
+                {
+                    <td>
+                        <button data-bs-target="#create_@item.Id" data-bs-toggle="modal" class=""> Devolver </button>
                     <div class="modal fade" id="create_@item.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Registrar devolución</h5>
                                 <button type="button" class="boton-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
+                            </div
                             <div class="modal-body">
                                  <p> <strong class="fs-5 fw-bold"> Vamos a registrar la devolución del prestamo: </strong> <span class=" fw-bold text-danger fs-5">@Html.DisplayFor(modelItem => item.Id)</span> </p>
 
@@ -113,7 +110,7 @@
                                         <label for="observaciones" class="control-label">Observaciones</label>
                                         <textarea rows="4" cols="50" name="observaciones" class="form-control"></textarea>
                                     </div>
-                                    <input type="submit" value="enviar" class="boton boton-medium mt-2">
+                                    <button type="submit" value="" class="">Enviar</button>
                                 </form>
                             </div>
                           
@@ -121,9 +118,10 @@
                         </div>
                     </div>
                 
-                <a asp-action="Edit" asp-route-id="@item.Id" class="boton medium mt-1"> Renovar </a>
+                    <button><a asp-action="Edit" asp-route-id="@item.Id" class=""></a>Renovar</button>
                 @* <button class="d-inline ms-2"><a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark fa-2xl" style="color: #fa0000;"></i></a></button> *@
             </td>
+            }
         </tr>
 }
     </tbody>

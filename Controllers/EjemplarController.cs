@@ -27,17 +27,20 @@ namespace tallerbiblioteca.Controllers
             _librosServices = librosServices;
         }
 
-        public async Task<IActionResult> Index(string busqueda,int pagina = 1, int itemsPagina  = 8)
+        public async Task<IActionResult> Index(string busqueda,int pagina = 1, int itemsPagina  = 6)
         {
             var ejemplares  = await _ejemplarServices.ObtenerEjemplares();
             if (busqueda != null){
                 busqueda = busqueda.ToLower();
                 ejemplares = ejemplares.Where (e=>e.Id.ToString().Contains(busqueda)  || e.Libro.Nombre.ToLower().Contains(busqueda)  || e.Isbn_libro.ToString().Contains(busqueda ) || e.EstadoEjemplar.ToString().Contains(busqueda )).ToList();
             }
-            var totalEjemplares = ejemplares.Count;
+
+            int totalEjemplares = ejemplares.Count;
+            int total = (totalEjemplares / itemsPagina)+1;
             var ejemplaresPaginados = ejemplares.Skip((pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
-            Paginacion<Ejemplar> paginacion  = new(ejemplaresPaginados,totalEjemplares,pagina,itemsPagina);
-             ViewData["libros"] = new SelectList(await _librosServices.ObtenerLibros(),"Id","Nombre");
+            Paginacion<Ejemplar> paginacion  = new(ejemplaresPaginados,total,pagina,itemsPagina);
+            ViewData["libros"] = new SelectList(await _librosServices.ObtenerLibros(),"Id","Nombre");
+            ViewData["libros"] = new SelectList(await _librosServices.ObtenerLibros(),"Id","Nombre");
             return View(paginacion);
                             
         }
@@ -88,11 +91,10 @@ namespace tallerbiblioteca.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int Id,string Estado)
+        public async Task<IActionResult> Edit(int Id)
         {
             var ejemplar = await _ejemplarServices.BuscarEjemplar(Id);
             if(ejemplar!=null){
-                ejemplar.EstadoEjemplar  = Estado;
                 MensajeRespuestaValidacionPermiso(await _ejemplarServices.Edit(User,ejemplar));
             }else{
                 Console.WriteLine("no se esta encontrando ejemplar con el id:"+Id);

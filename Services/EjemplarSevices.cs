@@ -125,7 +125,7 @@ namespace tallerbiblioteca.Services
             return Status;
         }
 
-        public async Task<int> Edit(ClaimsPrincipal User,Ejemplar ejemplar){
+       public async Task<int> Edit(ClaimsPrincipal User,Ejemplar ejemplar){
 
             var Id_rol_string = User.FindFirst(ClaimTypes.Role).Value;
             int Id_rol = Int32.Parse(Id_rol_string);
@@ -133,6 +133,16 @@ namespace tallerbiblioteca.Services
             if(Status==200){
                 
                 if(ejemplar!=null){
+
+                    Console.WriteLine(ejemplar.EstadoEjemplar);
+                    if (ejemplar.EstadoEjemplar.Equals("DISPONIBLE"))
+                    {
+                        ejemplar.EstadoEjemplar = "NO_DISPONIBLE";
+                    }
+                    else
+                    {
+                        ejemplar.EstadoEjemplar = "DISPONIBLE";
+                    }
 
                     _context.Update(ejemplar);
                     await _context.SaveChangesAsync();

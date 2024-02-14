@@ -7,7 +7,7 @@ function MostrarMensajeUsuarios(icono,Mensaje) {
         // title: 'BookWare Dice',
         toast : true,
         text: Mensaje,
-        position: 'top-right',
+     
         
         
         // footer: '<a>!BookWare!</a>'

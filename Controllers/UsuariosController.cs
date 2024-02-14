@@ -11,6 +11,9 @@ using tallerbiblioteca.Models;
 using tallerbiblioteca.Services;
 using System.Net.Mail;
 using System.Numerics;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+
 
 namespace tallerbiblioteca.Controllers
 {
@@ -31,7 +34,6 @@ namespace tallerbiblioteca.Controllers
         {
             return View();
         }
-
         [AllowAnonymous]
         // GET: Usuarios/Create
         public IActionResult Create()
@@ -41,17 +43,13 @@ namespace tallerbiblioteca.Controllers
         }
 
         // GET: Usuarios
-        public async Task<IActionResult> Index(string busqueda ,int pagina=1, int itemsPagina=6 )
+        public async Task<IActionResult> Index(string busqueda, int pagina=1, int itemsPagina=6 )
         {
          
             var usuarios = await _usuariosServices.ObtenerUsuarios();
-            if (busqueda != null){
-                 busqueda = busqueda.ToLower();
-                if(int.TryParse(busqueda,out int Numero_documento)){
-                    usuarios = usuarios.Where (u=>u.Name.ToLower().Contains(busqueda) || u.Apellido.ToLower().Contains(busqueda) || u.Numero_documento.ToString().Contains(busqueda )).ToList();
-                }else{
-                     usuarios = usuarios.Where (u=>u.Name.Contains(busqueda) || u.Apellido.Contains(busqueda)).ToList();
-                }
+            
+            if (busqueda != null) {
+                usuarios = await _usuariosServices.Buscar(busqueda);
             }
             
 
@@ -62,17 +60,9 @@ namespace tallerbiblioteca.Controllers
            
 
             var model = new Paginacion<Usuario>(usuariosPaginados, total, pagina, itemsPagina);
-
-
-
             return View(model);
           
         }
-
-     
-
- 
-
         // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
@@ -160,16 +150,17 @@ namespace tallerbiblioteca.Controllers
                 var UserEncontrado = _usuariosServices.BuscarUsuario(usuario);
                 if (UserEncontrado != null)
                 {
-                    if (UserEncontrado.Estado == "Inhabilitado")
+                    if (UserEncontrado.Estado == "INHABILITADO")
                     {
                         TempData["ErrorMessage"] = "No puedes ingresar al aplicativo, te encuentras Inhabilitado";
                         return View();
                     }
-                    else if (UserEncontrado.Estado == "Suspendido")
+                    else if (UserEncontrado.Estado == "SUSPENDIDO")
                     {
                         TempData["ErrorMessage"] = "No puedes ingresar al aplicativo, te encuentras Suspendido";
                         return View();
                     }
+                    
                     Console.WriteLine($"el nombre dle usuario a iniciar session es: {UserEncontrado.Name}");
                      Console.WriteLine($"el nombre del rol a iniciar session es: {UserEncontrado.Rol.Nombre}");
                     var claims = new List<Claim>

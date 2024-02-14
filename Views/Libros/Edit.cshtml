@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-controller ="Libros" asp-action="Edit" method="post" enctype="multipart/form-data">
+        <form asp-controller ="Libros" id="formularioEditar" asp-action="Edit" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -34,7 +34,7 @@
                 <span class="text-danger">Seleccione una nueva imagen si desea cambiarla.</span>
             </div>
     
-            <button class="boton medium" type="submit">
+            <button class="boton medium" id="botonEditar" type="submit">
                 Editar
             </button>
            
@@ -43,11 +43,17 @@
 </div>
 
 <div>
-    
-         <a asp-action="Index" class="mt-2 botonDelete deleteMedium">Regresar</a>
-   
-   
+    <a asp-action="Index" class="mt-2 botonDelete deleteMedium">Regresar</a>
 </div>
+
+<script>
+    // Agrega un event listener al botón del formulario
+document.getElementById('botonEditar').addEventListener('click', function () {
+     // Si se cumplen los requisitos, obténemos el formulario y lo enviamos
+    var formulario = document.getElementById('formularioEditar');
+    formulario.submit();
+});
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

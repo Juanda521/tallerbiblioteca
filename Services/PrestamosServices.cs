@@ -24,39 +24,54 @@ namespace tallerbiblioteca.Services
 
         }
 
-
+       
         public async Task<List<Prestamo>> ObtenerPrestamos(){
             
-            return await _context.Prestamos.Include(p=>p.Peticion)
-                                                .ThenInclude(p=>p.Usuario)
-                                            .Include(p=>p.Peticion)
-                                                .ThenInclude(p=>p.Ejemplar).ThenInclude(p=>p.Libro)
-                                            .ToListAsync();
+            try
+            {
+                return await _context.Prestamos
+                    .Include(p => p.Peticion)
+                        .ThenInclude(p => p.Usuario)
+                    .Include(p => p.Peticion)
+                        .ThenInclude(p => p.Ejemplar)
+                            .ThenInclude(p => p.Libro)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error al obtener los préstamos: {ex.Message}");
+                return null; // O maneja el error de otra manera que consideres más adecuada para tu aplicación
+            }
         }
 
-        public List<Prestamo> BuscarPrestamos(string busqueda, DateTime? fechaInicio, DateTime? fechaFin)
+       public List<Prestamo> BuscarPrestamos(string busqueda, DateTime? fechaInicio, DateTime? fechaFin)
         {
-            Console.WriteLine("vamos a buscar PRESTAMOS");
-             Console.WriteLine(fechaInicio);
-             Console.WriteLine(fechaFin);
-            List<Prestamo> prestamos = _context.Prestamos
-                .Include(p => p.Peticion)
-                    .ThenInclude(p => p.Usuario)
-                .Include(p => p.Peticion)
-                    .ThenInclude(p => p.Ejemplar).ThenInclude(p => p.Libro)
-                .ToList();
-
-            if (!string.IsNullOrEmpty(busqueda))
+            try
             {
-                prestamos = prestamos.Where(p =>
-                    p.Peticion.Usuario.Name.ToLower().Contains(busqueda) ||
-                    p.Peticion.Usuario.Numero_documento.ToString().Contains(busqueda) ||
-                    p.Peticion.Id_ejemplar.ToString().Contains(busqueda) || p.Peticion.Ejemplar.Libro.Nombre.ToLower().Contains(busqueda) ||
-                    p.Estado.ToLower().Contains(busqueda))
-                    .ToList();
-            }
+                Console.WriteLine("Vamos a buscar PRESTAMOS");
+                Console.WriteLine(fechaInicio);
+                Console.WriteLine(fechaFin);
 
-              if (fechaInicio != null && fechaFin != null)
+                List<Prestamo> prestamos = _context.Prestamos
+                    .Include(p => p.Peticion)
+                        .ThenInclude(p => p.Usuario)
+                    .Include(p => p.Peticion)
+                        .ThenInclude(p => p.Ejemplar).ThenInclude(p => p.Libro)
+                    .ToList();
+
+                if (!string.IsNullOrEmpty(busqueda))
+                {
+                    prestamos = prestamos.Where(p =>
+                        p.Peticion.Usuario.Name.ToLower().Contains(busqueda) ||
+                        p.Peticion.Usuario.Numero_documento.ToString().Contains(busqueda) ||
+                        p.Peticion.Id_ejemplar.ToString().Contains(busqueda) || 
+                        p.Peticion.Ejemplar.Libro.Nombre.ToLower().Contains(busqueda) ||
+                        p.Estado.ToLower().Contains(busqueda))
+                        .ToList();
+                }
+
+                if (fechaInicio != null && fechaFin != null)
                 {
                     DateTime fechaInicioValue = fechaInicio.Value.Date;
                     DateTime fechaFinValue = fechaFin.Value.Date.AddDays(1); // Incrementa un día para incluir la fecha de fin
@@ -66,41 +81,39 @@ namespace tallerbiblioteca.Services
                         .ToList();
                 }
 
-            return prestamos;
+                return prestamos;
+            }
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error al buscar préstamos: {ex.Message}");
+                return new List<Prestamo>(); // O maneja el error de otra manera que consideres más adecuada para tu aplicación
+            }
         }
 
-
-        // public List<Prestamo> BuscarPrestamos(string busqueda){
-            
-        //      List<Prestamo> prestamos;
-        //      prestamos  = _context.Prestamos.Include(p=>p.Peticion)
-        //                                         .ThenInclude(p=>p.Usuario)
-        //                                     .Include(p=>p.Peticion)
-        //                                         .ThenInclude(p=>p.Ejemplar).ThenInclude(p=>p.Libro).ToList();
-        //      if(int.TryParse(busqueda,out int Id_ejemplar)){
-        //             prestamos = prestamos.Where(p=>p.Peticion.Usuario.Name.ToLower().Contains(busqueda)||p.Peticion.Usuario.Numero_documento.ToString().Contains(busqueda) || p.Peticion.Id_ejemplar.ToString().Contains(busqueda)).ToList();
-        //         }else{
-        //              prestamos =  _context.Prestamos.Where(p=>p.Peticion.Usuario.Name.ToLower().Contains(busqueda)).ToList();
-        //         }
-            
-
-              
-        //     return prestamos;
-        // }
-
-         public async Task<Prestamo> Buscar(int id)
+       
+        public async Task<Prestamo> Buscar(int id)
         {
-            var peticion = await _context.Prestamos.Include(p => p.Peticion)
-                                                        .ThenInclude(p => p.Usuario)
-                                                .Include(p => p.Peticion)
-                                                    .ThenInclude(p => p.Ejemplar)
-                                                    .ThenInclude(e=>e.Libro).SingleAsync(p => p.Id == id);
-            if (peticion != null)
+            try
             {
+                var peticion = await _context.Prestamos
+                    .Include(p => p.Peticion)
+                        .ThenInclude(p => p.Usuario)
+                    .Include(p => p.Peticion)
+                        .ThenInclude(p => p.Ejemplar)
+                            .ThenInclude(e => e.Libro)
+                    .SingleAsync(p => p.Id == id);
+
                 return peticion;
             }
-            return new();
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error al buscar el préstamo: {ex.Message}");
+                return null; // O maneja el error de otra manera que consideres más adecuada para tu aplicación
+            }
         }
+
 
         public async Task<List<Peticiones>> ObtenerPeticiones(){
             return await _peticionesServices.ObtenerpeticionesEnEspera();
@@ -110,36 +123,45 @@ namespace tallerbiblioteca.Services
             return await _peticionesServices.Buscar(id);
         }
 
-     
-
-
-
-        public async Task<ResponseModel> Registrar(Prestamo prestamo,ClaimsPrincipal User){
-
-            int status = _configuracionServices.ValidacionConfiguracionActiva("Registrar_prestamo",_configuracionServices.ObtenerRolUserOnline(User));
-            if(status==200){
-              
-                prestamo.Fecha_inicio = obtenerFechaActual();
+        public async Task<ResponseModel> Registrar(Prestamo prestamo, ClaimsPrincipal User)
+        {
+            try
+            {
+                int status = _configuracionServices.ValidacionConfiguracionActiva("Registrar_prestamo", _configuracionServices.ObtenerRolUserOnline(User));
+                if (status == 200)
+                {
+                    prestamo.Fecha_inicio = obtenerFechaActual();
+                    prestamo.Fecha_fin = ObtenerFechaFinal(prestamo.Fecha_inicio);
+                    Console.WriteLine(prestamo.Id_peticion);
+                    prestamo.Peticion = await _peticionesServices.Buscar(prestamo.Id_peticion);
                 
-              
-                prestamo.Fecha_fin = ObtenerFechaFinal(prestamo.Fecha_inicio);
-                Console.WriteLine(prestamo.Id_peticion);
-                prestamo.Peticion =  await _peticionesServices.Buscar(prestamo.Id_peticion);
-           
-                prestamo.Peticion.Estado  = "ACEPTADA";
-                prestamo.Peticion.Ejemplar.EstadoEjemplar  = "EN PRESTAMO";
-                _context.Prestamos.Add(prestamo);
-                Console.WriteLine("este es el corrreo al que se enviara el correo de confirmacion de prestamo: "+ prestamo.Peticion.Usuario.Correo);
-               
-                //enviamos correo a usuario confirmandole su solicitud
-                _emailServices.SendEmail(_emailServices.EmailPrestamo(prestamo));
+                    prestamo.Peticion.Estado = "ACEPTADA";
+                    prestamo.Peticion.Ejemplar.EstadoEjemplar = "EN PRESTAMO";
+                    _context.Prestamos.Add(prestamo);
+                    
+                    // Guardar los cambios en la base de datos
+                    await _context.SaveChangesAsync();
+
+                    Console.WriteLine("Este es el correo al que se enviará el correo de confirmación de préstamo: " + prestamo.Peticion.Usuario.Correo);
                 
-                await _context.SaveChangesAsync();
-            }else{
-                Console.WriteLine("A mirar que esta fallando :("+status);
+                    // Enviamos correo al usuario confirmando su solicitud
+                    _emailServices.SendEmail(_emailServices.EmailPrestamo(prestamo));
+                }
+                else
+                {
+                    Console.WriteLine("A mirar qué está fallando :( Código de estado: " + status);
+                }
+                return _configuracionServices.MensajeRespuestaValidacionPermiso(status);
             }
-            return  _configuracionServices.MensajeRespuestaValidacionPermiso(status);
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error al registrar el préstamo: {ex.Message}");
+                // Aquí podrías devolver un mensaje específico indicando que ocurrió un error al registrar el préstamo
+                return new ResponseModel { Mensaje = "Ocurrió un error al registrar el préstamo.", Icono = "error" };
+            }
         }
+
 
         public DateTime obtenerFechaActual(){
             return DateTime.Now;
@@ -149,43 +171,46 @@ namespace tallerbiblioteca.Services
             return Fecha_inicio.AddDays(15);
         }
 
-        public async Task<Prestamo>ObtenerPrestamo(int id){
-            return  await _context.Prestamos.FindAsync(id);
-//      
-        }
-
-        public DateTime Renovar(DateTime fecha){
-            return fecha.AddDays(15);
-        }
-
-        public async Task<ResponseModel>Editar(Prestamo prestamo,ClaimsPrincipal user,DateTime Fecha_fin){
-
-            Console.WriteLine("llegamos a editar prestamo");
-            int status = _configuracionServices.ValidacionConfiguracionActiva("editar_prestamo",_configuracionServices.ObtenerRolUserOnline(user));
-            var resultado  =_configuracionServices.MensajeRespuestaValidacionPermiso(status);
-            if(status==200){
-                Console.WriteLine("aca ya va editar");
-
-                Console.WriteLine($"esta es la fecha fin actual del prestamo: {prestamo.Fecha_fin}");
-                prestamo.Fecha_fin = Fecha_fin;
-                  Console.WriteLine($"esta es la fecha fin actualizada: {prestamo.Fecha_fin}");
-
-                  // Obtenemos el tipo de dato de la propiedad Fecha_fin
-                    Type type = prestamo.Fecha_fin.GetType();
-
-                    // Imprimimos el tipo de dato
-                    Console.WriteLine(type);
-
-               
-                  
-
-                 _context.Update(prestamo);
-                await _context.SaveChangesAsync();
-
+        public async Task<Prestamo> ObtenerPrestamo(int id)
+        {
+            try
+            {
+                return await _context.Prestamos.FindAsync(id);
             }
-            return resultado;
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error al obtener el préstamo: {ex.Message}");
+                return null; // O maneja el error de otra manera que consideres más adecuada para tu aplicación
+            }
+        }
 
+       public async Task<ResponseModel> Editar(Prestamo prestamo, ClaimsPrincipal user, DateTime Fecha_fin)
+        {
+            try
+            {
+                Console.WriteLine("Llegamos a editar el préstamo");
+                int status = _configuracionServices.ValidacionConfiguracionActiva("editar_prestamo", _configuracionServices.ObtenerRolUserOnline(user));
+                var resultado = _configuracionServices.MensajeRespuestaValidacionPermiso(status);
+                if (status == 200)
+                {
+                    Console.WriteLine("Aquí ya va a editar el préstamo");
 
+                    Console.WriteLine($"Esta es la fecha fin actual del préstamo: {prestamo.Fecha_fin}");
+                    prestamo.Fecha_fin = Fecha_fin;
+                    Console.WriteLine($"Esta es la fecha fin actualizada: {prestamo.Fecha_fin}");
+
+                    _context.Update(prestamo);
+                    await _context.SaveChangesAsync();
+                }
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error al editar el préstamo: {ex.Message}");
+                return new ResponseModel { Mensaje = "Ocurrió un error al editar el préstamo.", Icono = "error" };
+            }
         }
 
        

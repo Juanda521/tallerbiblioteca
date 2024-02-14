@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
-
-
+using System.Security.Claims;
 using tallerbiblioteca.Models;
 using tallerbiblioteca.Services;
 namespace tallerbiblioteca.Controllers
@@ -12,12 +11,9 @@ namespace tallerbiblioteca.Controllers
     [Authorize]
     public class PeticionesController : Controller
     {
-
         private PeticionesServices _peticionesServices;
         private UsuariosServices _usuariosServices;
         private EjemplarServices _ejemplaresServices;
-        
-
         public PeticionesController(UsuariosServices usuariosServices, PeticionesServices peticionesServices, EjemplarServices ejemplarServices)
         {
             _peticionesServices = peticionesServices;
@@ -27,10 +23,13 @@ namespace tallerbiblioteca.Controllers
         }
 
         // GET: Peticiones
-        public async Task<IActionResult> Rechazadas(int itemsPagina = 5, int pagina = 1)
+        public async Task<IActionResult> Rechazadas(int itemsPagina = 5, int pagina = 1,DateTime? fechaInicio = null,DateTime? fechaFin= null,string? busqueda=null)
         {
             var peticionesRechazadas = await _peticionesServices.Rechazadas();
-
+            if (busqueda != null )
+            {
+                peticionesRechazadas = await _peticionesServices.Buscarechazadas(fechaInicio,fechaFin,busqueda);
+            }
             int totalPeticionesRechazadas = peticionesRechazadas.Count;
             var total = (totalPeticionesRechazadas / 6) + 1;
 
@@ -68,14 +67,22 @@ namespace tallerbiblioteca.Controllers
 
             return View("Index", paginacion);
         }
-        public async Task<IActionResult> Index(int itemsPagina = 5, int pagina = 1)
+        public async Task<IActionResult> Index(int itemsPagina = 5, int pagina = 1, int? id = null)
         {
 
-            PeticionesViewModel peticionesViewModel = new()
+               PeticionesViewModel peticionesViewModel = new()
             {
                 Peticiones = await _peticionesServices.Obtenerpeticiones()
-            };
 
+            };
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (User.IsInRole("2") && userIdClaim != null)
+            {
+                int userId = Convert.ToInt32(userIdClaim.Value);
+                peticionesViewModel.Peticiones = await _peticionesServices.BuscarP(userId);
+            }
+            peticionesViewModel.Peticiones = peticionesViewModel.Peticiones.OrderBy(p => p.Estado == "EN ESPERA" ? 0 : 1).ToList();
             int totalPeticiones = peticionesViewModel.Peticiones.Count;
             var total = (totalPeticiones / 6) + 1;
 
@@ -143,6 +150,11 @@ namespace tallerbiblioteca.Controllers
                     resultado.Icono = "info";
                     TempData["Mensaje"] = JsonConvert.SerializeObject(resultado);
                     break;
+                case 501:
+                    resultado.Mensaje = "Estas Inhabilitado o Suspendido, no puedes realizar esta accion, comunicate con el administrador para que puedas acceder a este servicio";
+                    resultado.Icono = "info";
+                    TempData["Mensaje"] = JsonConvert.SerializeObject(resultado);
+                break;
                 case 502:
                     resultado.Mensaje = "El libro solicitado no se encuentra Disponible, puedes reservarlo para que puedad disfrutar de el cuando esté disponible de nuevo en la biblioteca";
                     resultado.Icono = "info";
@@ -194,7 +206,7 @@ namespace tallerbiblioteca.Controllers
         {
             var ejemplares = await _ejemplaresServices.ObtenerEjemplares(); // Asegúrate de que tu servicio devuelva ejemplares con información de libro
             ViewData["Id_ejemplar"] = new SelectList(ejemplares, "Id", "Libro.Nombre"); // Usa el nombre de la propiedad que contiene el nombre del libro
-            ViewData["Id_usuario"] = new SelectList(await _usuariosServices.ObtenerUsuarios(), "Id", "Name");
+            ViewData["Id_usuario"] = new SelectList(await _usuariosServices.ValidarUsuario(), "Id", "Name");
             return View();
         }
         // POST: Peticiones/Create

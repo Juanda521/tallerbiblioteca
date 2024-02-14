@@ -30,6 +30,7 @@ public class BibliotecaDbContext : DbContext
     public DbSet<Devolucion> Devoluciones {get; set;}
     public DbSet<Sancion> Sanciones {get; set;}
     public DbSet<Matriculados>Matriculados {get; set;}
+    public DbSet<Reserva> Reserva { get; set;}
 
 
 

@@ -4,21 +4,23 @@
 @{
     ViewData["Title"] = "Usuarios";
 }
-<div class="row">
+<div class="row" style="color: black">
     <div class="col-md-4 m-2">
-        <p>
-            <a class="boton medium" asp-action="Create"> Registrar</a>
-        </p>
+        <button><a asp-action="Create">Registrar</a></button>
+        <form asp-controller="/Pdf" asp-action="GenerarPdfUsuarios" method="post" class="mt-2">
+            <button type="submit">Generar reporte</button>
+        </form>
+
     </div>
     <div class="col-4 m-2">
         <form asp-action="Index">         
-                <input type="text" name="busqueda" placeholder="N° Documento Apellidos o Nombre" class="form-control form-input m-2"/>
-                <button type="submit" class="boton medium" value="Buscar">Buscar</button>
+                <input type="text" name="busqueda" placeholder="Documento/Nombre/Apellido/Correo" class="form-control form-input m-2"/>
+                <button type="submit">Buscar</button>
         </form>
     </div>
 </div>
 <div class=" m-3">
-    <p>Total de Usuarios Registrados: @Model.Items.Count</p>
+    <p style="color: black">Total de Usuarios Registrados: @Model.Items.Count</p>
     <table class="text-dark fs-5 mt-3">
     <thead>
     <tr>
@@ -42,7 +44,7 @@
         </th>
         <th>
           <div class="col-md-4 ">
-        <h2 class="fw-bold text-center ms-5 ps-5 ">Usuarios</h2>
+        <h2 class="fw-bold text-center ms-5 ps-5 ">Acciones</h2>
     </div>
         </th>
     </tr>
@@ -83,16 +85,16 @@
                     <td>
                         @if(usuario.Estado == "INHABILITADO" || usuario.Estado == "SUSPENDIDO")
                         {
+                            <a style="color: black" class="editar" asp-controller="Usuarios" asp-action="Informacion" asp-route-id="@usuario.Id">Información</a>
                         }
                         else
                         {
-                            <a class="boton medium" asp-action="Edit" asp-route-id="@usuario.Id">Editar</a>
+                            <a class="Eliminar" style="color:black"asp-action="Inhabilitar" asp-route-id="@usuario.Id">Inhabilitar</a>
+                            <a class="Eliminar" style="color:black" asp-action="Suspender" asp-route-id="@usuario.Id">Suspender</a>
+                            <a style="color: black" class="editar" asp-controller="Usuarios" asp-action="Informacion" asp-route-id="@usuario.Id">Información</a>
                         }
-                        <a class="boton medium" asp-action="Inhabilitar" asp-route-id="@usuario.Id"> Inhabilitar</a>
-                        <a class="boton medium" asp-action="Suspender" asp-route-id="@usuario.Id" > Suspender</a>
-                        <a class="boton medium" asp-action="Informacion" asp-route-id="@usuario.Id"> Información</a>
-                       
-                   
+                        
+                     
                     </td>
             </tr>
     }

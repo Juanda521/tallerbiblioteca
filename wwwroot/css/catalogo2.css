@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,300&family=Young+Serif&display=swap');
+.catalogo{
+    margin-top:100px;
+}
+
+
+.imagen-libro-relacionado {
+  width: 70px;
+  height: 100px;
+}
+
+
+
+.libro-nombre {
+  max-height: 60px; /* Ajusta según tus necesidades */
+  
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+

@@ -3,8 +3,8 @@
 
 function validarYEnviarFormulario() {
     // Obtén los valores seleccionados en los selectores de género y autor
-    var generoIds = document.getElementById('GeneroIds').selectedOptions;
-    var autorIds = document.getElementById('AutorIds').selectedOptions;
+    var generoIds = document.getElementById('GeneroIds').value;
+    var autorIds = document.getElementById('AutorIds').value;
 
     console.log("hablalo desde la validacion");
 
@@ -36,33 +36,29 @@ function validarYEnviarFormulario() {
     }
 }
 
-
-    $(document).ready(function() {
-        $('.chkCambiarCampo').change(function() {
-            var libroId = $(this).data('libro-id');
-            $('#libroId').val(libroId);
-            console.log("ID del libro: " + libroId);
-            $('#formCambiarCampo').submit();
-            console.log("le dimos click al boton y enviamos el formulario");
-        });
+$(document).ready(function() {
+    $('.chkCambiarCampo').change(function() {
+        var libroId = $(this).data('libro-id');
+        $('#libroId').val(libroId);
+        console.log("ID del libro: " + libroId);
+        $('#formCambiarCampo').submit();
+        console.log("le dimos click al boton y enviamos el formulario de editar libro");
     });
+});
 
+$(document).ready(function() {
+    $('.chkCambiarEjemplar').change(function() {
+        var ejemplarId = $(this).data('ejemplar-id');
+        $('#ejemplarId').val(ejemplarId);
+        console.log("ID del ejemplar: " + ejemplarId);
+        $('#formCambiarEstadoEjemplar').submit();
+        console.log("le dimos click al boton y enviamos el formulario de editar ejemplar");
+    });
+});
 
-
-// $(document).ready(function() {
-//   $(".selectpicker").selectpicker({
-    
-//     size: 2, // Establecer el número de opciones visibles
-//     width: '50%' // Establecer el ancho del select
-//     // Puedes agregar más opciones según la documentación de Bootstrap-Select
-//   });
-// });
-
-
-
-    
 
 // Agrega un event listener al botón del formulario
 document.getElementById('botonRegistrar').addEventListener('click', function () {
+    console.log("le dimos click a registrar libro");
     validarYEnviarFormulario();
 });

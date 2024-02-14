@@ -1,5 +1,5 @@
 ﻿
-console.log("estamos en configuracion.js");
+
 function MensajeBackup(descargaFinalizada){
     if (descargaFinalizada != null && descargaFinalizada.toLowerCase() === "true") {
         Console.WriteLine("llego el viewdata");
@@ -14,10 +14,12 @@ $(document).ready(function() {
         var configId = $(this).data('config-id');
         $('#configId').val(configId);
         console.log("ID de la configuracion: " + configId);
-        // $('#formCambiarCampoPermiso').submit();
+        $('#formCambiarCampoPermiso').submit();
         console.log("le dimos click al boton y enviamos el formulario");
     });
 });
+
+
 
 function sendForm(e) {
     e.preventDefault();

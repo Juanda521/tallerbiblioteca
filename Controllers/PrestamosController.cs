@@ -29,38 +29,49 @@ namespace tallerbiblioteca.Controllers
         }
 
         // GET: Prestamos
-        public async Task<IActionResult> Index(DateTime? fechaInicio, DateTime? fechaFin,string busqueda,int Numero_pagina = 1, int itemsPagina = 10)
+       // GET: Prestamos
+        public async Task<IActionResult> Index(DateTime? fechaInicio, DateTime? fechaFin,string busqueda,int Numero_pagina = 1, int itemsPagina = 10, int? id = null)
         {
-            
-            var prestamos = await _prestamosServices.ObtenerPrestamos(); 
+            try
+            {
+                var prestamos = await _prestamosServices.ObtenerPrestamos();
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
-            var rolUsuario = User.FindFirst(ClaimTypes.Role)?.Value;
-            Console.WriteLine($"el rol del usuario en linea es: {rolUsuario}");
+                var rolUsuario = User.FindFirst(ClaimTypes.Role)?.Value;
+                Console.WriteLine($"el rol del usuario en linea es: {rolUsuario}");
 
-            var idUsuarioOnline  = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            Console.WriteLine($"el documento del usuario en linea es: {idUsuarioOnline}");
+                var idUsuarioOnline  = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                Console.WriteLine($"el documento del usuario en linea es: {idUsuarioOnline}");
 
-            if (rolUsuario!="1" && rolUsuario!="3"){
-                Console.WriteLine("hay en linea un usuario");
-                prestamos =  prestamos.Where(p=>p.Peticion.Usuario.Id.ToString()==idUsuarioOnline).ToList();
-            }else{
-                Console.WriteLine("hay en linea un administrador o un alfabetizador");
+                if (rolUsuario!="1" && rolUsuario!="3"){
+                    Console.WriteLine("hay en linea un usuario");
+                    prestamos =  prestamos.Where(p=>p.Peticion.Usuario.Id.ToString()==idUsuarioOnline).ToList();
+                }else{
+                    Console.WriteLine("hay en linea un administrador o un alfabetizador");
+                }
+
+                if (busqueda!=null || fechaInicio!=null || fechaFin !=null){
+                    Console.WriteLine("vamos a buscar");
+                    prestamos =  _prestamosServices.BuscarPrestamos(busqueda,fechaInicio,fechaFin);
+                }
+
+                var PrestamosPaginados = prestamos.OrderBy(p => p.Estado == "En curso" ? 0 : 1).Skip((Numero_pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
+                
+                
+                int total_prestamos  = prestamos.Count(); 
+
+                Paginacion<Prestamo> paginacion  =new Paginacion<Prestamo>(PrestamosPaginados,total_prestamos,Numero_pagina,itemsPagina);
+
+                return View(paginacion);
             }
-
-            if (busqueda!=null || fechaInicio!=null || fechaFin !=null){
-                Console.WriteLine("vamos a buscar");
-                prestamos =  _prestamosServices.BuscarPrestamos(busqueda,fechaInicio,fechaFin);
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en la función Index: {ex.Message}");
+                return RedirectToAction("Error", "Home"); // Redirigir a una página de error
             }
-
-            var PrestamosPaginados = prestamos.OrderBy(p => p.Estado == "En curso" ? 0 : 1).Skip((Numero_pagina - 1) * itemsPagina).Take(itemsPagina).ToList();
-            
-            
-            int total_prestamos  = prestamos.Count(); 
-
-            Paginacion<Prestamo> paginacion  =new Paginacion<Prestamo>(PrestamosPaginados,total_prestamos,Numero_pagina,itemsPagina);
-
-            return View(paginacion);
         }
+
         
         public  IActionResult Calendario()
         {
@@ -71,9 +82,46 @@ namespace tallerbiblioteca.Controllers
         [HttpGet]
         [Route("/api/Calendario")]
         public async Task<IActionResult> Prestamos(){
-           var prestamos  = await _prestamosServices.ObtenerPrestamos();
-            return Json(prestamos);
+            try
+            {
+                var prestamos  = await _prestamosServices.ObtenerPrestamos();
+                return Json(prestamos);
+            }
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en la función Prestamos: {ex.Message}");
+                return BadRequest(); // Retornar un código de error 400
+            }
         }
+
+        [HttpGet]
+        [Route("/api/Graficas")]
+        public async Task<IActionResult> PrestamosGrafica(){
+           try
+            {
+                var prestamos  = await _prestamosServices.ObtenerPrestamos();
+
+                var prestamosPorLibro = prestamos
+                    .GroupBy(p => p.Peticion.Ejemplar.Libro.Nombre)
+                    .Select(g => new { Libro = g.Key, Cantidad = g.Count() })
+                    .ToList();
+
+                // Construir la lista en el formato deseado
+                var resultado = prestamosPorLibro
+                    .Select(p => new { Libro = p.Libro, Cantidad = p.Cantidad })
+                    .ToList();
+                return Json(resultado);
+            }
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en la función PrestamosGrafica: {ex.Message}");
+                return BadRequest(); // Retornar un código de error 400
+            }
+        }
+
+
 
         //GET: Prestamos/Create
         public async Task<IActionResult> Create()
@@ -96,133 +144,150 @@ namespace tallerbiblioteca.Controllers
     
         public async Task<IActionResult> Created(int id)
         {
-
-            Console.WriteLine(id);
-            Prestamo prestamo = new Prestamo
+            try
             {
-                Id_peticion = id // este sera el id de la peticion la cual estamos aceptando
-            };
-
-            var peticion = await _prestamosServices.BuscarPeticion(id);
-            if (peticion!=null){
-
-                if(peticion.Estado == "ACEPTADA"){
-                Console.WriteLine("la peticion ya ha sido aceptada");
-                ResponseModel resultado = new()
+                Console.WriteLine(id);
+                Prestamo prestamo = new Prestamo
                 {
-                    Mensaje = "No puedes realizar esta accion ya que la peticion ya ha sido aceptada",
-                    Icono = "info"
+                    Id_peticion = id // este sera el id de la peticion la cual estamos aceptando
                 };
 
-                MensajeRespuestaValidacionPermiso(resultado);
-                return RedirectToAction("Index","Peticiones");
-                }else if(peticion.Estado == "RECHAZADA"){
-                     Console.WriteLine("la peticion ya ha sido aceptada");
-                ResponseModel resultado = new()
+                var peticion = await _prestamosServices.BuscarPeticion(id);
+                if (peticion == null)
                 {
-                    Mensaje = "No puedes realizar esta accion ya que la peticion ya ha sido rechazada",
-                    Icono = "info"
-                };
-
-                MensajeRespuestaValidacionPermiso(resultado);
-                return RedirectToAction("Rechazadas","Peticiones");
+                    Console.WriteLine("No se encontró la petición");
+                    return NotFound(); // Retorna un código de error 404
                 }
-            
-         
-            }else{
-                Console.WriteLine("no esta encontrando la peticion aceptada");
+
+                switch (peticion.Estado)
+                {
+                    case "ACEPTADA":
+                        Console.WriteLine("La petición ya ha sido aceptada");
+                        return RedirectToAction("Index", "Peticiones");
+                    case "RECHAZADA":
+                        Console.WriteLine("La petición ya ha sido rechazada");
+                        return RedirectToAction("Rechazadas", "Peticiones");
+                }
+
+                MensajeRespuestaValidacionPermiso(await _prestamosServices.Registrar(prestamo, User));
+                return RedirectToAction(nameof(Index));
             }
-
-            MensajeRespuestaValidacionPermiso(await _prestamosServices.Registrar(prestamo,User));
-            return RedirectToAction(nameof(Index));
-
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en la función Created: {ex.Message}");
+                return BadRequest(); // Retornar un código de error 400
+            }
         }
+
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Id_peticion,Fecha_inicio,Fecha_fin,Estado")] Prestamo prestamo)
         {
-            Console.WriteLine("estamos en create");
-            Console.WriteLine(prestamo.Fecha_inicio);
-            var resultado = await  _prestamosServices.Registrar(prestamo,User);
-            TempData["Mensaje"] =JsonConvert.SerializeObject(resultado);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                Console.WriteLine("estamos en create");
+                Console.WriteLine(prestamo.Fecha_inicio);
+                var resultado = await _prestamosServices.Registrar(prestamo, User);
+                TempData["Mensaje"] = JsonConvert.SerializeObject(resultado);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en la función Create: {ex.Message}");
+                return BadRequest(); // Retornar un código de error 400
+            }
             
         }
 
-         private void MensajeRespuestaValidacionPermiso(ResponseModel resultado){
+        private void MensajeRespuestaValidacionPermiso(ResponseModel resultado){
             
             TempData["Mensaje"] = JsonConvert.SerializeObject(resultado);
             
         }   
-         //GET: Prestamos/Edit/5
+       // GET: Prestamos/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Prestamos == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var prestamo = await _prestamosServices.ObtenerPrestamo(id);
-            if (prestamo == null)
-            {
-                return NotFound();
+                var prestamo = await _prestamosServices.ObtenerPrestamo(id);
+                if (prestamo == null)
+                {
+                    return NotFound();
+                }
+                
+                return View(prestamo);
             }
-           
-            return View(prestamo);
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en la función Edit (GET): {ex.Message}");
+                return BadRequest(); // Retornar un código de error 400
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Id_peticion,Fecha_inicio,Fecha_fin,Estado")] Prestamo prestamo)
         {
-
-
-            if (id != prestamo.Id)
+            try
             {
-                return NotFound();
-            }
-            Console.WriteLine($"asi esta llegando la fecha inicio al controlador: {prestamo.Fecha_inicio}");
-            Console.WriteLine($"asi esta llegando la fecha fin al controlador: {prestamo.Fecha_fin}");
-
-            //inicilizamos el objeto resultado para almacenar el mensaje que se va mostrar en la alerta
-             ResponseModel resultado = new ResponseModel();
-
-            //buscamos el prestamo actual al que pertenece el prestamo a editar
-            var PrestamoExistente = await _prestamosServices.Buscar(prestamo.Id);
-
-            if(PrestamoExistente!=null){
-                if(PrestamoExistente.Estado == "Devuelto"){
-                    resultado.Mensaje = "No puedes renovar un préstamo que ya ha sido finalizado";
-                    resultado.Icono = "error";
-                }else{
-                    Console.WriteLine("el prestamo esta en curso");
-                    
-                    Console.WriteLine($"asi esta  la fecha fin del existente: {PrestamoExistente.Fecha_fin}");
-                    Console.WriteLine($"asi esta llegando la fecha fin al controlador para actualizar: {prestamo.Fecha_fin}");
-
-                    if (PrestamoExistente.Fecha_fin>=prestamo.Fecha_fin){
-                        Console.WriteLine("no se puede actualizar el prestamo con una fecha antes de la que tiene registrada");
-                        resultado.Mensaje = "No puedes poner la fecha final del prestamo antes de la actual registrada. ";
-                        resultado.Icono = "error";
-                        TempData["Mensaje"] =JsonConvert.SerializeObject(resultado);
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    resultado = await  _prestamosServices.Editar(PrestamoExistente,User,prestamo.Fecha_fin);
+                if (id != prestamo.Id)
+                {
+                    return NotFound();
                 }
 
-            }else{
-                Console.WriteLine("no encontro el prestamo sabiendo que es el mismo id");
+                // Inicializar el objeto resultado para almacenar el mensaje que se mostrará en la alerta
+                ResponseModel resultado = new ResponseModel();
+
+                // Buscar el prestamo actual al que pertenece el prestamo a editar
+                var PrestamoExistente = await _prestamosServices.Buscar(prestamo.Id);
+
+                if (PrestamoExistente != null)
+                {
+                    if (PrestamoExistente.Estado == "Devuelto")
+                    {
+                        resultado.Mensaje = "No puedes renovar un préstamo que ya ha sido finalizado";
+                        resultado.Icono = "error";
+                    }
+                    else
+                    {
+                        Console.WriteLine("El prestamo está en curso");
+                        
+                        if (PrestamoExistente.Fecha_fin >= prestamo.Fecha_fin)
+                        {
+                            resultado.Mensaje = "No puedes poner la fecha final del préstamo antes de la actual registrada.";
+                            resultado.Icono = "error";
+                            TempData["Mensaje"] = JsonConvert.SerializeObject(resultado);
+                            return RedirectToAction(nameof(Index));
+                        }
+
+                        resultado = await _prestamosServices.Editar(PrestamoExistente, User, prestamo.Fecha_fin);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No encontró el préstamo sabiendo que es el mismo id");
+                }
+
+                TempData["Mensaje"] = JsonConvert.SerializeObject(resultado);
+                return RedirectToAction(nameof(Index));
             }
-            TempData["Mensaje"] =JsonConvert.SerializeObject(resultado);
-            return RedirectToAction(nameof(Index));
-            
+            catch (Exception ex)
+            {
+                // Manejo de la excepción
+                Console.WriteLine($"Ocurrió un error en la función Edit (POST): {ex.Message}");
+                return BadRequest(); // Retornar un código de error 400
+            }
         }
- 
-
-
     }
 }
 

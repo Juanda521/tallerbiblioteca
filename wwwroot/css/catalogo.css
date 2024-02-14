@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,300&family=Young+Serif&display=swap');
-.catalogo{
-    margin-top:100px;
-}
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,300&family=Young+Serif&display=swap'); */
 
 
 .imagen-libro-relacionado {
@@ -17,6 +14,33 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Estilos para el input checkbox */
+.form-check-input:checked {
+  background-color: #1e6042; /* Cambia el color de fondo cuando está marcado */
+  border-color: #1e6042; /* Cambia el color del borde cuando está marcado */
+}
+
+
+.etiqueta {
+  background-color: #1e6042; /* Cambia esto al color que desees */
+  padding: 4px 8px; /* Ajusta el espaciado como desees */
+  border: 1px solid #000; /* Agrega un borde si lo deseas */
+  border-radius: 5px; /* Agrega esquinas redondeadas si lo deseas */
+  width: 100px;
+  color: #fff;
+  margin-left: auto; /* Centra horizontalmente el elemento */
+  margin-right: auto; /* Centra horizontalmente el elemento */
+}
+
+
+
+
+.card img {
+  max-width: 100%; /* Ajusta el tamaño máximo al ancho de su contenedor */
+  height: auto; /* Permite que la altura se ajuste automáticamente para mantener la proporción */
+  object-fit: cover;
 }
 
 

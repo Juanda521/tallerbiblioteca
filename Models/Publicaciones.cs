@@ -18,7 +18,7 @@ namespace tallerbiblioteca.Models
         [Required(ErrorMessage = "este campo es obligatorio.")]
         public DateTime FechaFin { get; set; }
         
-        public String Estado { get; set; }
+        public string Estado { get; set; }
         [Required(ErrorMessage = "este campo es obligatorio.")]
         public byte[] Imagen { get; set; }
     }

@@ -1,0 +1,326 @@
+﻿@using System.Security.Claims;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - tallerbiblioteca</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+     
+    <link rel="stylesheet" href="~/css/Configuracion.css" asp-append-version="true" />
+    
+    <link rel="stylesheet" href="~/css/catalogo.css" asp-append-version="true" /> 
+    @*<link rel="stylesheet" href="~/css/Publicaciones.css" />*@
+     <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    
+    <link rel="stylesheet" href="~/css/Calendario.css" asp-append-version="true" />
+    
+  
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel="stylesheet" href="~/lib/evo-calendar-master/evo-calendar/css/evo-calendar.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Latest compiled and minified CSS -->
+
+    
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css" rel="stylesheet">
+
+     <script src="https://kit.fontawesome.com/718958d351.js" crossorigin="anonymous"></script>
+      <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.5.0/locales/es.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+     
+        <style>
+    /* Estilos personalizados para los botones */
+    .swal2-popup .swal2-actions .swal2-confirm {
+     background-color:#14A44D;
+      color: #fff; /* Cambia el color del texto del botón Confirmar */
+    }
+    
+    .swal2-popup .swal2-actions .swal2-cancel {
+      background-color: #e74c3c; /* Cambia el color de fondo del botón Cancelar */
+      color: #fff; /* Cambia el color del texto del botón Cancelar */
+    }
+@* 
+    .fc-toolbar{
+        background-color: rgb(20, 251, 159);
+    } *@
+    
+   
+    
+    
+
+     .pagination-active-bg {
+    background-color: rgb(20, 251, 159);
+  }
+  </style>
+
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@1,300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="wrapper row0">
+  <div id="topbar" class="hoc clear"> 
+    <!-- ################################################################################################ -->
+    <div class="fl_left">
+      <ul class="nospace inline pushright">
+        <!--correo y numero de la institucion-->
+      </ul>
+    </div>
+    <div class="fl_right">
+      <ul class="faico clear">
+        <li><a class="faicon-facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+        <li><a class="faicon-pinterest" href="#"><i class="fa fa-pinterest"></i></a></li>
+        <li><a class="faicon-twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+        <li><a class="faicon-dribble" href="#"><i class="fa fa-dribbble"></i></a></li>
+        <li><a class="faicon-linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="faicon-google-plus" href="#"><i class="fa fa-google-plus"></i></a></li>
+        <li><a class="faicon-rss" href="#"><i class="fa fa-rss"></i></a></li>
+      </ul>
+    </div>
+    <!-- ################################################################################################ -->
+  </div>
+</div>
+<div class="wrapper row1">
+  <header id="header" class="hoc clear"> 
+    <!-- ################################################################################################ -->
+   <div id="logo" class="fl_left row">
+        <div class="col-9">
+            <h1><a href="index.html">BookWare</a></h1>
+        </div>
+        <div class="col-3">
+                <a class="dropdown ">
+                    <a data-bs-toggle="dropdown" aria-expanded="true">
+                        <div class="notification">
+                            <div class="notification-icon"></div>
+                            <div class="notification-badge border border-dark border-1" id="valorCampana"></div>
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu" style="width: 200px;">
+                        @if (User.FindFirst(ClaimTypes.Role)?.Value == "1"|| User.FindFirst(ClaimTypes.Role)?.Value == "3")
+                        {
+                            <li id="notificacionesContainer"></li>
+                        }else{
+                            <li id="notificaiconesUsuario"></li>
+                        }
+                    </ul>
+                </a>
+        </div>
+    </div>
+    
+   <div class="fl_right">
+        <div class="row">
+            <div class="col-10">
+                <ul class="nospace inline ">
+                    <li><h6 class="ms-5">
+                        @if(User.Identity.IsAuthenticated){
+                            @User.Identity.Name;
+
+                            var Roles = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role && System.Text.RegularExpressions.Regex.IsMatch(c.Value, @"^[a-zA-Z_]+$"));
+                            <br>
+                            <span>@Roles?.Value?.ToLower()</span>
+                        }else{
+                            <h6>BookWare</h6>
+                        }
+                        
+                    </li> 
+                </ul> 
+            </div>
+            <div class="col-2 pt-3">
+                <a  data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-bars fa-2xl"  style="color: #1e6042">  </i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item">Perfil</a></li>
+                    @if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
+                    {
+                        <li><a class="dropdown-item" asp-controller="Rol" asp-action="Index">Roles</a></li>
+                        <li><a class="dropdown-item" asp-controller="Configuracion" asp-action="Index">Configuración</a></li>
+                    }
+                    <li><hr class="dropdown-divider"></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a class="dropdown-item" onclick="CerrarSesion()">Cerrar sessión</a></li>
+                    }
+            </div>
+        </div>
+    </div>
+    <!-- ################################################################################################ -->
+  </header>
+</div> 
+    <div class="container__menu">
+    <div class="menu">
+                <input type="checkbox" id="check__menu">
+                <label for="check__menu" id="label__check">
+                    <i class="fas fa-bars icon__menu"></i>
+                </label>
+                <nav>
+                    <ul>
+                        <li>  <a id="selected" asp-area="" asp-controller="Prestamos" asp-action="Calendario"> </a></li>
+                        <li><a  asp-controller="Libros" asp-action="Catalog">Catálogo</a></li>
+                        <li><a  asp-controller="Publicaciones" asp-action="Index">Publicaciones</a></li>
+                        @if ((User.FindFirst(ClaimTypes.Role)?.Value == "1") || (User.FindFirst(ClaimTypes.Role)?.Value == "3"))
+                        {
+                            <li><a asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a></li>   
+                            <li><a asp-area="" asp-controller="Libros" asp-action="Index">Libros</a>
+                                <ul>
+                                    <li><a asp-area="" asp-controller="Ejemplar" asp-action="Index" >Ejemplares</a></li>
+                                    <li><a asp-area="" asp-controller="Autor" asp-action="Index" >Autores</a></li>
+                                    <li><a asp-area="" asp-controller="Generos" asp-action="Index" >Generos</a></li>
+                                
+                                </ul>
+                            </li>
+                        }
+
+                    @if ((User.FindFirst(ClaimTypes.Role)?.Value == "2"))
+                    {
+                        <li><a asp-area="" asp-controller="Peticiones" asp-action="Index" asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Peticiones</a></li>
+                        <li><a asp-area="" asp-controller="Reservas" asp-action="Index" asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Reservas</a></li>
+                        <li><a asp-area="" asp-controller="Prestamos" asp-action="Index" asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Préstamos</a></li>
+                        <li><a asp-area="" asp-controller="Devoluciones" asp-action="Index" asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Devoluciones</a></li>
+                        <li><a asp-area="" asp-controller="Sanciones" asp-action="Index" asp-route-id="@User.FindFirst(ClaimTypes.NameIdentifier)?.Value">Sanciones</a></li>
+                    }else{
+                    <li><a asp-controller="Peticiones" asp-action="Index">Peticiones</a></li>
+                    <li><a asp-area="" asp-controller="Reservas" asp-action="Index">Reservas</a></li>
+                        <li><a asp-area="" asp-controller="Prestamos" asp-action="Index">Préstamos</a></li>
+                        <li><a asp-area="" asp-controller="Devoluciones" asp-action="Index">Devoluciones</a></li>
+                        <li><a asp-area="" asp-controller="Sanciones" asp-action="Index" >Sanciones</a></li>
+                        }
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a  asp-area="" asp-controller="Usuarios" asp-action="Login">Iniciar sesion</a>
+                        }
+                    </ul>
+                </nav>
+
+    </div>
+    </div>
+
+
+    
+    
+    
+    <div class="container mb-1">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    @* <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - tallerbiblioteca - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> *@
+    @if (ViewData["Cerrar"]!=null && ViewData["Cerrar"].ToString()=="true")
+    {
+        <script>
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Cerrando sesión',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(function () {
+                window.location.href = '@Url.Action("Login", "Usuarios")';
+            });
+        </script>
+    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> *@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/js/bootstrap-select.min.js"></script> *@
+
+
+
+    <script src="~/js/Configuracion.js"> </script>
+   
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script src="~/js/Usuarios.js"></script>
+   
+    <script src="~/js/Libros.js"> </script>
+   
+    @* <script src="~/js/EventManager.js"></script> *@
+    
+
+   
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (ViewBag.CambiarColor != null && (bool)ViewBag.CambiarColor)
+    {
+        <script>
+            var elemento = document.getElementById("valorCampana");
+            elemento.style.color = "red"; // Cambia el color a rojo (puedes usar cualquier color deseado).
+        </script>
+    }
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <div class="wrapper row4">
+  <footer id="footer" class="hoc clear"> 
+    <!-- ################################################################################################ -->
+    <div class="one_third first">
+      <h6 class="title">Ultricies turpis libero</h6>
+      <ul class="nospace linklist contact">
+        <li><i class="fa fa-map-marker"></i>
+          <address>
+          Street Name &amp; Number, Town, Postcode/Zip
+          </address>
+        </li>
+        <li><i class="fa fa-phone"></i> +00 (123) 456 7890<br>
+          +00 (123) 456 7890</li>
+        <li><i class="fa fa-fax"></i> +00 (123) 456 7890</li>
+        <li><i class="fa fa-envelope-o"></i> info@domain.com</li>
+      </ul>
+    </div>
+    <div class="one_third">
+      <h6 class="title">Egestas risus sed</h6>
+      <ul class="nospace linklist">
+        <li><a href="#">class aptent taciti sociosqu ad litora</a></li>
+        <li><a href="#">per conubia nostra inceptos himenaeos</a></li>
+        <li><a href="#">donec elit metus malesuada quis</a></li>
+        <li><a href="#">molestie convallis cursus eros donec</a></li>
+        <li><a href="#">elit turpis ornare auctor mattis feugiat</a></li>
+      </ul>
+    </div>
+    <div class="one_third">
+      <h6 class="title">Ultricies eros libero</h6>
+      <p class="btmspace-30">Vitae lectus mauris dui ipsum rhoncus vitae semper quis ultrices in nibh.</p>
+      <form method="post" action="#">
+        <fieldset>
+          <legend>Newsletter:</legend>
+          <input class="btmspace-15" type="text" value="" placeholder="Name">
+          <input class="btmspace-15" type="text" value="" placeholder="Email">
+          <button type="submit" value="submit">Submit</button>
+        </fieldset>
+      </form>
+    </div>
+    <!-- ################################################################################################ -->
+  </footer>
+</div>
+
+    
+
+</body>
+</html>
+<script>
+    function CerrarSesion() {
+        Swal.fire({
+            title: "¿Seguro que deseas cerrar sesión?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, cerrar sesión",
+            cancelButtonText: "No",
+        }).then((result) => {
+            if (result.value) {
+                window.location.href = "@Url.Action("Logout", "Usuarios")";
+            }
+        });
+    }
+</script>

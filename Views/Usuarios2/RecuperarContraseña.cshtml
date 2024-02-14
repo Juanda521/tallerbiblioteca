@@ -1,0 +1,23 @@
+@model tallerbiblioteca.Models.Usuario;
+@{
+    ViewData["Title"] = "Recuperar contraseña";
+}
+<h2>Recuperar contraseña</h2>
+<div >
+    <form asp-action="RecuperarContraseña">
+        <div class="col-md-4">
+            <label for="correo">Numero documento</label>
+           
+            <input type="text" class="form-control" id="correo" name="Numero_documento" placeholder="Digita tu numero de documento" required>
+            @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+            {
+                <p class="text-danger">@ViewData["ErrorMessage"]</p>
+            }
+        </div>
+        <br>
+        <div class="col-md-4 ">
+            <button type="submit" class="boton boton-">Enviar</button>
+        </div>
+    </form>
+    <button class="mt-4 boton boton-secondary "><a asp-action="login">regresar</a></button>
+</div>

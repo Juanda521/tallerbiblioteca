@@ -1,0 +1,142 @@
+@model Paginacion<Peticiones>
+@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Index";
+}
+@if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
+{
+    <div class="row" style="color:black">
+    
+        <div class="col-4 justify-content-between">
+            <button>
+                <a asp-action="Create">Registrar</a>
+            </button>
+            <button><a class="" asp-action="Rechazadas">Peticiones rechazadas</a></button>
+
+        </div>
+        <div class=" col-md-4">
+            <form asp-action="BuscarFiltro" class="ms-4" style="color: black">
+                <p class="mb-0">
+                    <label>Fecha de Peticion:</label>
+                    <span>DESDE: </span>
+                    <input required type="date" name="fechaInicio" class="form-control" />
+
+                    <span> HASTA: </span>
+                    <input required type="date" name="fechaFin" class="form-control" />
+                    <button type="submit">Buscar</button>
+                </p>
+            </form>
+        </div>
+        <div class="col-md-4 pt-2">
+            <form asp-action="BuscarFiltro" class="ms-4" style="color: black">
+                <p class="mb-0">
+                    <label>Filtro Busqueda</label>
+                    <input type="text" name="busqueda" placeholder="Nombre-Apellido-NombreLibro " class="form-control" />
+                    <button type="submit" class="mt">Buscar</button>
+                </p>
+            </form>
+            <h1 class="fw-bold text-center pt-4">Peticiones</h1>
+        </div>
+        </div>
+    }
+    <table class="mt-2">
+        <thead>
+            <tr>
+                <th> Id </th>
+                <th> Id ejemplar</th>
+                <th> Nombre Libro</th>
+                <th> Nombre </th>
+                <th> Apellido </th>
+                <th> FechaPeticion </th>
+                <th> Motivo </th>
+                <th> Estado </th>
+            @if(User.FindFirst(ClaimTypes.Role)?.Value == "1"){
+                <th></th>
+            }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id_ejemplar)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ejemplar.Libro.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreUsuario)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.apellido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaPeticion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Motivo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Estado)
+                    </td>
+                    @if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
+                    {
+                    <td>
+                         <a asp-controller="Prestamos" asp-action="Created" asp-route-id="@item.Id"><i class="fa-solid fa-circle-check fa-2xl" style="color: #83B440;"></i></a>
+                         <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark fa-2xl" style="color: #fa0000;"></i></a>
+                        </td>
+                    }
+            </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="pagination p1">
+            <ul>
+                <a style="width:80px;" class="page-link text-dark me-1" href="?pagina=1&busqueda=@Context.Request.Query["busqueda"]">Primera</a>
+                <a href="?pagina=@(Model.Numero_pagina - 1)&busqueda=@Context.Request.Query["busqueda"]">
+                <li><<</li></a>
+                @for (var i = 1; i <= Model.TotalItems; i++)
+                {
+
+                    <a class=" me-1 @(Model.Numero_pagina == i ? " is-active" : "") " href="?pagina=@i&busqueda=@Context.Request.Query["busqueda"]">@i</a>
+
+                }
+                @if (Model.Numero_pagina < Model.TotalItems)
+                {
+
+                    <a href="?pagina=@(Model.Numero_pagina + 1)&busqueda=@Context.Request.Query["busqueda"]">>></a>
+
+                }
+                <a class="ms-1" href="?pagina=@Model.TotalItems&busqueda=@Context.Request.Query["busqueda"]">
+                <li>Fin</li></a>
+            </ul>
+        </div>
+    </div>
+
+    @section Scripts{
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        @{
+            var Mensaje = TempData["Mensaje"] as string;
+
+            if (Mensaje != null)
+            {
+                var mensaje = Newtonsoft.Json.JsonConvert.DeserializeObject<ResponseModel>(Mensaje);
+                <script>
+                    console.log("se va mostrar");
+
+                    const cuerpo = `@Html.Raw(Newtonsoft.Json.JsonConvert.ToString(mensaje.Mensaje))`;
+                    const icono = "@mensaje.Icono";
+                    MostrarMensajeUsuarios(icono, cuerpo);
+                </script>
+
+            }
+
+        }
+    }

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using tallerbiblioteca.Context;
 using tallerbiblioteca.Services;
+using PdfSharp.Drawing;
+using PdfSharp.Fonts;
 
 var builder = WebApplication.CreateBuilder(args);
 //IMPORTANTE lo utilizamos para no estar creando objetos de tipo service en los controladores
@@ -19,6 +21,7 @@ builder.Services.AddScoped<PublicacionesServices>();
 builder.Services.AddScoped<BackupService>();
 builder.Services.AddScoped<AutoresServices>();
 builder.Services.AddScoped<GenerosServices>();
+builder.Services.AddScoped<ReservasServices>();
 
 // builder.Services.AddScoped<PeticionesServices>();
 // Add services to the container.

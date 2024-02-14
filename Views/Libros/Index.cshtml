@@ -5,6 +5,9 @@
 @{
     ViewData["Title"] = "Index";
 }
+
+
+<h1 class="fw-bold fs-1 text-center ">Libros</h1>
 <div class="row">
     <div class="col-md-4">
         <p>
@@ -14,15 +17,13 @@
 
     <div class="col-4">
         <form asp-action="Index"> 
-            <p>
+            <p class="d-flex align-items-center">
                 <input type="text" name="busqueda" placeholder="Nombre libro" class="form-control"/>
                 <button type="submit" class="ms-4 mt-1 boton  " value="Buscar">Buscar</button>
             </p>
         </form>
     </div>
-    <div class="col-md-4 pt-2">
-        <h1 class="fw-bold text-center pt-4">Libros</h1>
-    </div>
+   
 </div>
 <div class="row">
     <div class="col-10">
@@ -58,8 +59,8 @@
                             @* @Html.DisplayFor(modellibro => libro.CantidadLibros) *@
                             @libro.CantidadLibros
                         </td>
-                        <td style="width: 220px;">
-                            <button class="d-inline m-1 "><a asp-action="Edit" asp-route-id="@libro.Id"><i class="fa-solid fa-file-pen fa-xl" style="color: #82B440;"></i></a></button>
+                        <td >
+                            <button class="d-inline m-1 "><a asp-action="Edit" asp-route-id="@libro.Id"><i class="fa-solid fa-file-pen fa-xl" style="color: #1e6042;"></i></a></button>
                             
                             @* <!-- este es el boton que abre el modal para ver información del libro -->                          *@
                             <button data-bs-target="#info_@libro.Id" data-bs-toggle="modal" class="d-inline m-1 "><i class="fa-solid fa-circle-info fa-xl " style="color: #7b7b7c"></i></button>
@@ -175,11 +176,15 @@
                                     <button  class="d-inline"data-bs-toggle="modal" data-bs-target="#create_@libro.Id"><i class="fa-solid fa-circle-check fa-xl" style="color: #ff0404;"></i> </button>
                                 }
                             } *@
-                           <label class="d-inline toggle-switch">
+                            
+                           <label class="toggle-switch">
                                 <input type="checkbox" class="chkCambiarCampo" @(libro.Estado == "ACTIVO" ?"checked" : "" ) data-libro-id="@libro.Id">
                              <span class="slider"></span>
                             </label>
-                             
+                            
+                               <form id="formCambiarCampo" method="post" asp-action="CambiarEstado">
+                <input type="hidden" id="libroId" name="libroId" value="">
+            </form>
 
                           
                         </td>
@@ -188,9 +193,7 @@
                 </tbody>
             </table>
 
-            <form id="formCambiarCampo" method="post" asp-action="CambiarEstado">
-                <input type="hidden" id="libroId" name="libroId" value="">
-            </form>
+          
 
             <div class="row">
                <div class="pagination p1">
@@ -233,7 +236,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script> </script>
+   @* <script src="~/js/Libros.js"> </script> *@
      @{
         var Mensaje =  TempData["Mensaje"] as string;
  

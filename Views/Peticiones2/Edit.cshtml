@@ -1,0 +1,52 @@
+@model tallerbiblioteca.Models.Peticiones
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Editar</h1>
+
+<h4>Peticiones</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form  asp-action="Edit" >
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Id_ejemplar" class="control-label"></label>
+                <input asp-for="Id_ejemplar" class="form-control" />
+                <span asp-validation-for="Id_ejemplar" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Id_usuario" class="control-label"></label>
+                <input asp-for="Id_usuario" class="form-control" />
+                <span asp-validation-for="Id_usuario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Motivo" class="control-label"></label>
+                <input asp-for="Motivo" class="form-control" />
+                <span asp-validation-for="Motivo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaPeticion" class="control-label">Fecha y Hora:</label>
+                <input asp-for="FechaPeticion" class="form-control" />
+                <span asp-validation-for="FechaPeticion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit"> Editar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <button>
+         <a asp-action="Index">Regresar</a>
+    </button>
+   
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

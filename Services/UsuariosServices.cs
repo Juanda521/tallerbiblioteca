@@ -28,10 +28,18 @@ namespace tallerbiblioteca.Services
             _emailServices  = emailServices;
             _rolServices  =rolServices;
         }
+        public async Task<List<Usuario>> ObtenerUsuariosPdf()
+        {
+            return await _context.Usuarios.Include(u=>u.Rol).ToListAsync();
+        }
 
         public async Task<List<Usuario>> ObtenerUsuarios()
         {
             return await _context.Usuarios.ToListAsync();
+        }
+        public async Task<List<Usuario>> ValidarUsuario()
+        {
+            return await _context.Usuarios.Where(u=>u.Estado=="ACTIVO").ToListAsync();
         }
         public async Task<bool> Create(Usuario usuario)
         {   
@@ -112,9 +120,6 @@ namespace tallerbiblioteca.Services
 
             return matriculados != null ? true : false;
         }
-
-
-
         public int Suspender(int id, ClaimsPrincipal User)
         {
             var Id_rol_string = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -142,7 +147,7 @@ namespace tallerbiblioteca.Services
             int Id_rol = Int32.Parse(Id_rol_string);
             this.Status = _configuracionServices.ValidacionConfiguracionActiva("Inhabilitar_usuario", Id_rol);
             //si el estado que nos devolvio la validacion de la accion a realizar es correcta (status 200) podremos realizar la accion
-            var usuario = _context.Usuarios.Find(id);
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == id);
             if (Status == 200)
             {
                 if (usuario != null)
@@ -153,14 +158,6 @@ namespace tallerbiblioteca.Services
             }
             return Status;
         }
-
-        public List<Usuario> Buscar(string filtroBusqueda)
-        {
-            return _context.Usuarios
-                .Where(u => u.Name.Contains(filtroBusqueda) || u.Apellido.Contains(filtroBusqueda) || u.Correo.Contains(filtroBusqueda))
-                .ToList();
-        }
-
         public async Task<Usuario> Buscar(int Id){
             var usuario  =await _context.Usuarios.FindAsync(Id);
 
@@ -235,8 +232,6 @@ namespace tallerbiblioteca.Services
                 return true;
             }
         }
-
-
         public async Task<bool> ValidarNombreExistente(BigInteger documento, string nombre)
         {
             Console.WriteLine("ENTRANDO A VALIDAR NOMBRE");
@@ -256,7 +251,6 @@ namespace tallerbiblioteca.Services
                 return true;
             }
         }
-
         public (int,string,Usuario) RecuperarContraseña(int NumeroDocumento)
         {
             int codigo = 0;
@@ -282,13 +276,11 @@ namespace tallerbiblioteca.Services
             }
             return (codigo,mensajeError,usuario);
         }
-
         public int GeneracionCodigo()
         {
             var random = new Random();
             return random.Next(10000,99999);
         }
-        
         public bool ValidarPassword(string password)
         {
             // Expresión regular para validar la contraseña
@@ -297,7 +289,6 @@ namespace tallerbiblioteca.Services
             // Validar la contraseña con la expresión regular
             return Regex.IsMatch(password, pattern);
         }
-
         public bool ValidarUsuarioEnPrestamo(int id_usuario){
 
              // Utilizamos alias para hacer más legible el código
@@ -311,10 +302,10 @@ namespace tallerbiblioteca.Services
 
                 return false;
         }
-
-
-
-       
+        public async Task<List<Usuario>>Buscar(string busqueda)
+        {
+            return await _context.Usuarios.Where(u => u.Name == busqueda || u.Apellido == busqueda || u.Correo == busqueda || u.Numero_documento.ToString().Contains(busqueda)).ToListAsync();
+        }
     }
 }
 

@@ -1,38 +1,45 @@
 @model Paginacion<Peticiones>
-
+@using System.Security.Claims;
 @{
     ViewData["Title"] = "Index";
 }
-<div class="row">
-    <div class="col-4 justify-content-between">    
-            <a class="boton medium me-2" asp-action="Create">Registrar</a>
-            <a class="boton medium" asp-action="Rechazadas">Peticiones rechazadas</a>
-       
-    </div>
-    <div class=" col-md-4">
-            <form asp-action="BuscarFiltro" class="ms-4">
+@if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
+{
+    <div class="row" style="color:black">
+        <div class="col-4 justify-content-between">
+            <button>
+                <a asp-action="Create">Registrar</a>
+            </button>
+            <button><a class="" asp-action="Rechazadas">Peticiones rechazadas</a></button>
+            <form asp-controller="/Pdf" asp-action="GenerarPdfPeticiones" method="post" class="mt-2">
+                <button type="submit">Generar reporte</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <form asp-action="BuscarFiltro" class="ms-4" style="color: black">
                 <p class="mb-0">
                     <label>Fecha de Peticion:</label>
                     <span>DESDE: </span>
-                    <input type="date" name="fechaInicio" class="form-control" />
+                    <input required type="date" name="fechaInicio" class="form-control" />
 
                     <span> HASTA: </span>
-                    <input type="date" name="fechaFin" class="form-control" />
-                    <button type="submit" class="mt-2 boton medium">Buscar</button>
+                    <input required type="date" name="fechaFin" class="form-control" />
+                    <button class="mt-2"type="submit">Buscar</button>
                 </p>
             </form>
-    </div>
-    <div class="col-md-4 pt-2">
-         <form asp-action="BuscarFiltro" class="ms-4">
-            <p class="mb-0">
-                <label>Filtro Busqueda</label>
-                <input type="text" name="busqueda" placeholder="Nombre-Apellido-NombreLibro " class="form-control" />
-                <button type="submit" class="mt-2 boton medium">Buscar</button>
-            </p>
-        </form>
-        <h1 class="fw-bold text-center pt-4">Peticiones</h1>
-    </div>
-    </div>
+        </div>
+        <div class="col-md-4 pt-2">
+            <form asp-action="BuscarFiltro" class="ms-4" style="color: black">
+                <p class="mb-0">
+                    <label>Filtro Busqueda</label>
+                    <input type="text" name="busqueda" placeholder="Nombre-Apellido-NombreLibro " class="form-control" />
+                    <button class="mt-2"type="submit" class="mt">Buscar</button>
+                </p>
+            </form>
+            <h1 class="fw-bold text-center pt-4">Peticiones</h1>
+        </div>
+        </div>
+    }
     <table class="mt-2">
         <thead>
             <tr>
@@ -44,7 +51,9 @@
                 <th> FechaPeticion </th>
                 <th> Motivo </th>
                 <th> Estado </th>
+            @if(User.FindFirst(ClaimTypes.Role)?.Value == "1"){
                 <th></th>
+            }
             </tr>
         </thead>
         <tbody>
@@ -75,15 +84,14 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Estado)
                     </td>
+                    @if (User.FindFirst(ClaimTypes.Role)?.Value == "1")
+                    {
                     <td>
-                        @* <form asp-controller="Prestamos" asp-action="Create" method="post" >
-                    <input asp-for="@Model.PeticionesViewModel.Prestamo.Id_peticion" value="@item.Id"  type="hidden">
-                    <button type="submit">aceptar</button>
-                    </form>  *@
-                        <button class="d-inline"><a asp-controller="Prestamos" asp-action="Created" asp-route-id="@item.Id"><i class="fa-solid fa-circle-check fa-2xl" style="color: #83B440;"></i></a></button>
-                        <button class="d-inline ms-2"><a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark fa-2xl" style="color: #fa0000;"></i></a></button>
-                    </td>
-                </tr>
+                         <a asp-controller="Prestamos" asp-action="Created" asp-route-id="@item.Id"><i class="fa-solid fa-circle-check fa-2xl" style="color: #83B440;"></i></a>
+                         <a asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-xmark fa-2xl" style="color: #fa0000;"></i></a>
+                        </td>
+                    }
+            </tr>
             }
         </tbody>
     </table>
