@@ -1,14 +1,8 @@
 {
   "version": 2,
-<<<<<<< Updated upstream
-  "dgSpecHash": "jLwJFtUzfBERT0/lIXdzvZ9WfslpsIMZ3De5rSbD5XpxcvXwxS9+N4k+J2sXZaFWMnjA1zPBCNFX3tKmZXlLSA==",
+  "dgSpecHash": "f+douZFhZck9wl4MyPYd8Nup9cNhYqvoQwUS0G3Vpq2Z20PSC/bQoUSN8CZS09UKK8CVIUMaEEv9n71VFmabSQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
-=======
-  "dgSpecHash": "CBCLcvOIw0RTb1tl0e9l3fzkQVM4q/F6yreOlgJuj51l/A8NeQ6J0nBdp8QXDXBYK9CdOllU8tt5UDOxhfJIUg==",
-  "success": true,
-  "projectFilePath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\tallerbiblioteca\\tallerbiblioteca.csproj",
->>>>>>> Stashed changes
+  "projectFilePath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\finalLuis\\tallerbiblioteca\\tallerbiblioteca.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ASUS\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
@@ -239,5 +233,12 @@
     "C:\\Users\\ASUS\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problema al leer el archivo de caché C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\finalLuis\\tallerbiblioteca\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

@@ -11318,19 +11318,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-<<<<<<< Updated upstream
-      "projectUniqueName": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
+      "projectUniqueName": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\finalLuis\\tallerbiblioteca\\tallerbiblioteca.csproj",
       "projectName": "tallerbiblioteca",
-      "projectPath": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\tallerbiblioteca.csproj",
+      "projectPath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\finalLuis\\tallerbiblioteca\\tallerbiblioteca.csproj",
       "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ASUS\\source\\repos\\tallerbiblioteca\\tallerbiblioteca\\obj\\",
-=======
-      "projectUniqueName": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\tallerbiblioteca\\tallerbiblioteca.csproj",
-      "projectName": "tallerbiblioteca",
-      "projectPath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\tallerbiblioteca\\tallerbiblioteca.csproj",
-      "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\tallerbiblioteca\\obj\\",
->>>>>>> Stashed changes
+      "outputPath": "C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\finalLuis\\tallerbiblioteca\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -11407,5 +11399,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problema al leer el archivo de caché C:\\Users\\ASUS\\Desktop\\Proyecto\\entregable\\finalLuis\\tallerbiblioteca\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }
