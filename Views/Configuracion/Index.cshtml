@@ -22,7 +22,7 @@
             </button>
         </div>
         <div class="col-md-4">
-            @using (Html.BeginForm("SubirArchivo", "Configuracion", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("SubirArchivoMatriculados", "Configuracion", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 <input type="file" class="form-select" name="archivoCsv" />
                 <input type="submit" class="boton medium" value="Subir Archivo" />
@@ -30,8 +30,15 @@
         </div>
         <div class="col-md-4">
             <form method="post" asp-controller="Backup" asp-action="DownloadBackup">
-                <button class="boton medium" name="descarga" value="true" type="submit">Realizar Copia de Seguridad</button>
+                <button class="boton medium" name="descarga" value="true" type="submit">Descargar Copia de Seguridad</button>
             </form>
+        </div>
+         <div class="col-md-4">
+            @using (Html.BeginForm("SubirArchivoBak", "Backup", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <input type="file" class="form-select" name="archivoBackup" />
+                <input type="submit" class="boton medium" value="Restaurar base de datos" />
+            }
         </div>
 
     </div>

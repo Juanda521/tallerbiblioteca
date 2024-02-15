@@ -1,6 +1,9 @@
 using System;
 using System.Data.SqlClient;
 
+using Microsoft.SqlServer.Management.Common;
+using Microsoft.SqlServer.Management.Smo;
+
 namespace tallerbiblioteca.Services
 {
 
@@ -41,6 +44,33 @@ namespace tallerbiblioteca.Services
 
         public async Task<string> ObtenerRuta(){
            return _configuration["BackupFolderPath"];
+        }
+
+        public void RestoreDatabaseFromBackup(string backupFilePath)
+        {
+            try
+            {
+                // Crear un objeto ServerConnection usando la cadena de conexión
+                ServerConnection serverConnection = new ServerConnection(_configuration.GetConnectionString("Connection"));
+
+                // Crear un objeto Server usando la conexión
+                Server server = new Server(serverConnection);
+
+                // Crear un objeto Restore y establecer propiedades
+                Restore restore = new Restore();
+                restore.Database = server.Databases["bibliotecaFinal"].Name;
+                restore.Action = RestoreActionType.Database;
+                restore.Devices.AddDevice(backupFilePath, DeviceType.File);
+
+                // Ejecutar la operación de restauración
+                restore.SqlRestore(server);
+                
+                Console.WriteLine("La restauración se ha completado con éxito.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error al restaurar la base de datos: " + ex.Message);
+            }
         }
     }
 }

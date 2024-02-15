@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 
 using tallerbiblioteca.Services;
@@ -44,6 +46,34 @@ public class BackupController : Controller
         return RedirectToAction("Configuracion","Index");
         }
     }
+
+    public void SubirArchivoBak(IFormFile archivoBackup){
+        try
+        {
+            if ( archivoBackup.Length > 0)
+            {
+                // Guardar el archivo en una ubicación temporal o procesarlo directamente desde la memoria
+                string filePath = Path.GetTempFileName(); // Ubicación temporal para guardar el archivo
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    archivoBackup.CopyTo(stream);
+                }
+
+                // Restaurar la base de datos utilizando el archivo .bak
+                _backupService.RestoreDatabaseFromBackup(filePath);
+            }
+            else
+            {
+                Console.WriteLine("El archivo de copia de seguridad está vacío o no se proporcionó.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error al procesar el archivo de copia de seguridad: " + ex.Message);
+        }
+    }
+}
+
 
 
 
@@ -111,4 +141,3 @@ public class BackupController : Controller
 //     return RedirectToAction("Index","Libros");
 // }
 
-}
